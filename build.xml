@@ -3,7 +3,8 @@
 <!-- Properties -->
 
 <property name="build.dir" value="/home/jenkins/builds"/>
-<property name="src.dir" value="/home/jenkins/source/sgextensions/"/>
+<property name="src.dir" value="/root/.jenkins/workspace/SGExtensions"/>
+<property name="apis.dir" value="/home/jenkins/apis"/>
 <property name="resources.dir" value="${src.dir}/resources"/>
 
 <property name="download.dir" value="/home/jenkins/download"/>
