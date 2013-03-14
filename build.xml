@@ -123,9 +123,10 @@
 
 <!-- Copy classes -->
 <copy todir="${classes.dir}">
-<fileset dir="${mcp.dir}/reobf/minecraft"/>
+<fileset dir="${mcp.dir}/reobf/minecraft">
 <exclude name="META-INF"/>
 <exclude name="META-INF/*"/>
+</fileset>
 </copy>
 
 <!-- Copy resources -->
