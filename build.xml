@@ -73,15 +73,32 @@
 <!-- Copy sources -->
 <copy todir="${mcpsrc.dir}/minecraft">
 <fileset dir="${src.dir}"/>
-<fileset dir="${apis.dir}/buildcraft"/>
-<fileset dir="${apis.dir}/dan200"/>
-<fileset dir="${apis.dir}/ic2"/>
+<fileset dir="${apis.dir}"/>
 <filterset>
 <filter token="VERSION" value="${project.version.full}" />
 <filter token="BUILD_NUMBER" value="${build.number}" />
 </filterset>
 </copy>
+	
+<!-- Copy APIs properly -->
+	
+<!--
+<mkdir dir="${mcpsrc.dir}/minecraft/buildcraft"/>
+<copy todir="${mcpsrc.dir}/minecraft/buildcraft">
+<fileset dir="${apis.dir}/buildcraft"/>
+</copy>
+	
+<mkdir dir="${mcpsrc.dir}/minecraft/dan200"/>
+<copy todir="${mcpsrc.dir}/minecraft/dan200">
+<fileset dir="${apis.dir}/dan200"/>
+</copy>
 
+<mkdir dir="${mcpsrc.dir}/minecraft/ic2"/>
+<copy todir="${mcpsrc.dir}/minecraft/ic2">
+<fileset dir="${apis.dir}/ic2"/>
+</copy>-->
+	
+	
 <!-- Recompile -->
 
 <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
