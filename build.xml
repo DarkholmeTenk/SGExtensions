@@ -64,7 +64,7 @@
 
 
 
-<target name="compile" depends="initialize-version,setup">
+<target name="compile">
 
 <delete dir="${classes.dir}"/>
 <mkdir dir="${classes.dir}"/>
