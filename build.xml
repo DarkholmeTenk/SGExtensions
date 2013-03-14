@@ -41,6 +41,7 @@
 <!-- Clear build directory -->
 <target name="clean">
 <delete dir="${classes.dir}"/>
+<delete dir="${jar.dir}"/>
 </target>
 
 <!-- Set full version -->
@@ -64,7 +65,7 @@
 
 
 
-<target name="compile">
+<target name="compile" depends="clean">
 
 <delete dir="${classes.dir}"/>
 <mkdir dir="${classes.dir}"/>
