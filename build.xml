@@ -42,6 +42,8 @@
 <target name="clean">
 <delete dir="${classes.dir}"/>
 <delete dir="${jar.dir}"/>
+<delete dir="${mcp.dir}/reobf/minecraft"/>
+<mkdir dir="${mcp.dir}/reobf/minecraft"/>
 </target>
 
 <!-- Set full version -->
