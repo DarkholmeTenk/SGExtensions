@@ -71,7 +71,7 @@
 
 <!-- Copy sources -->
 <copy todir="${mcpsrc.dir}/minecraft">
-<fileset dir="${src.dir}/sgextensions"/>
+<fileset dir="${src.dir}"/>
 <fileset dir="${apis.dir}/buildcraft"/>
 <fileset dir="${apis.dir}/dan200"/>
 <fileset dir="${apis.dir}/ic2"/>
