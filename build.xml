@@ -110,7 +110,7 @@
 </copy>
 
 <!-- Copy resources -->
-<copy todir="${classes.dir}">
+<copy todir="${classes.dir}/resources">
 <fileset dir="${resources.dir}">
 <exclude name="build.xml"/>
 <exclude name="*.psd"/>
