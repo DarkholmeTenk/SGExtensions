@@ -74,13 +74,21 @@
 
 <!-- Copy sources -->
 <copy todir="${mcpsrc.dir}/minecraft">
-<fileset dir="${src.dir}"/>
 <fileset dir="${apis.dir}"/>
 <filterset>
 <filter token="VERSION" value="${project.version.full}" />
 <filter token="BUILD_NUMBER" value="${build.number}" />
 </filterset>
 </copy>
+
+<copy todir="${mcpsrc.dir}/minecraft/sgextensions">
+<fileset dir="${src.dir}"/>
+<filterset>
+<filter token="VERSION" value="${project.version.full}" />
+<filter token="BUILD_NUMBER" value="${build.number}" />
+</filterset>
+</copy>
+
 	
 <!-- Copy APIs properly -->
 	
