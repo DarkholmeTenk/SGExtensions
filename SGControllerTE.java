@@ -77,11 +77,11 @@ public class SGControllerTE extends BaseTileEntity
 
 	boolean linkToStargate(SGBaseTE gte)
 	{
-		if (!isLinkedToStargate && !gte.isLinkedToController && gte.isMerged)
+		if (!isLinkedToStargate && !gte.isLinked() && gte.isMerged)
 		{
-			System.out.printf(
+			/*System.out.printf(
 					"SGControllerTE: Linking controller at (%d, %d, %d) with stargate at (%d, %d, %d)\n",
-					xCoord, yCoord, zCoord, gte.xCoord, gte.yCoord, gte.zCoord);
+					xCoord, yCoord, zCoord, gte.xCoord, gte.yCoord, gte.zCoord);*/
 			linkedX = gte.xCoord;
 			linkedY = gte.yCoord;
 			linkedZ = gte.zCoord;
@@ -99,8 +99,10 @@ public class SGControllerTE extends BaseTileEntity
 
 	public void clearLinkToStargate()
 	{
-		System.out.printf("SGControllerTE: Unlinking controller at (%d, %d, %d) from stargate\n",
-				xCoord, yCoord, zCoord);
+		//System.out.printf("SGControllerTE: Unlinking controller at (%d, %d, %d) from stargate\n",
+		//		xCoord, yCoord, zCoord);
+		SGBaseTE gte = getLinkedStargateTE();
+		gte.unlinkFromController();
 		isLinkedToStargate = false;
 		markBlockForUpdate();
 	}

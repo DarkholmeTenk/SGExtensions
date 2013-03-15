@@ -466,6 +466,35 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						((SGControllerTE) te).checkForLink();
 				}
 	}
+	
+	public boolean isLinked()
+	{
+		if(isLinkedToController)
+		{
+			SGControllerTE test = getLinkedControllerTE();
+			if(test != null)
+			{
+				return true;
+			}
+			else
+			{
+				TileEntity te = worldObj.getBlockTileEntity(linkedX, linkedY, linkedZ);
+				if(te instanceof SGDarkDiallerTE)
+				{
+					SGBaseTE meTest = ((SGDarkDiallerTE)te).getLinkedGate();
+					if(meTest != null)
+					{
+						if(meTest.xCoord == xCoord && meTest.yCoord == yCoord && meTest.zCoord == zCoord)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		isLinkedToController = false;
+		return false;
+	}
 
 	public void unlinkFromController()
 	{

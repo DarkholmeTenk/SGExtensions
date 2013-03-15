@@ -117,6 +117,16 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	{
 	}
 	
+	public SGBaseTE getLinkedGate()
+	{
+		TileEntity te = worldObj.getBlockTileEntity(linkedX,linkedY,linkedZ);
+		if(te instanceof SGBaseTE)
+		{
+			return (SGBaseTE) te;
+		}
+		return null;
+	}
+	
 	public String openIris()
 	{
 		if(hasGate())
@@ -240,7 +250,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 			double Distance = getTEDistance((TileEntity) gate,(TileEntity) this);
 			if(Distance > 0 && Distance < 6)
 			{
-				if(gate.isLinkedToController == false)
+				if(gate.isLinked() == false)
 				{
 					ownedGate = gate;
 					linkedX = ((SGBaseTE) gate).xCoord;
@@ -320,6 +330,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		{
 			ownedGate.clearLinkToController();
 			ownedGate = null;
+			ownedGate.markBlockForUpdate();
 			isLinkedToStargate = false;
 		}
 	}
@@ -363,6 +374,8 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		}
 		return i;
 	}
+	
+	
 
 	int charToSymbol(char c)
 	{
