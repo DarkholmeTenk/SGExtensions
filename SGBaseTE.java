@@ -75,7 +75,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public boolean isMerged;
 	
-	public SGIrisState irisVarState;
+	public SGIrisState irisVarState = SGIrisState.Open;
 	public String irisType = "iris";
 	public int irisSlide;
 	private int irisTimer;
@@ -320,7 +320,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		nbt.setBoolean("isMerged", isMerged);
 		nbt.setInteger("state", state.ordinal());
 		nbt.setDouble("targetRingAngle", targetRingAngle);
-		nbt.setInteger("irisState", irisVarState.ordinal());
+		int TestInt = irisVarState.ordinal();
+		nbt.setInteger("irisState", TestInt);
 		nbt.setInteger("irisSlide", irisSlide);
 		nbt.setInteger("numEngagedChevrons", numEngagedChevrons);
 		//nbt.setString("homeAddress", homeAddress);
