@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 
-public class SGDarkDiallerTE extends TileEntity implements IPeripheral
+public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 {
 	public int x, y, z;
 	public SGBaseTE ownedGate = null;
@@ -32,12 +32,13 @@ public class SGDarkDiallerTE extends TileEntity implements IPeripheral
 	public final int coordRange = maxCoord - minCoord + 1;
 	public final int minDimension = -1;
 	public final int maxDimension = minDimension + dimensionPower - 1;
+	private final int range = 6;
 	//Bits of the SGAddressing class required for the Dialling Computer to work its magic.
 
 	@Override
 	public String getType()
 	{
-		return "Dialing Computer";
+		return "Dialling Computer";
 	}
 
 	@Override
@@ -284,7 +285,6 @@ public class SGDarkDiallerTE extends TileEntity implements IPeripheral
 		}
 		else
 		{
-			Chunk chunk = worldObj.getChunkFromBlockCoords(x, z);
 			TileEntity gate;
 			if(isLinkedToStargate)
 			{
@@ -294,16 +294,22 @@ public class SGDarkDiallerTE extends TileEntity implements IPeripheral
 					return linkGate((SGBaseTE) gate);
 				}
 			}
-			if (chunk != null)
-			{
-				for (Object te : chunk.chunkTileEntityMap.values())
-				{
-					if (te instanceof SGBaseTE)
+			Trans3 t = localToGlobalTransformation();
+			for (int i = -range; i <= range; i++)
+				for (int j = -range; j <= range; j++)
+					for (int k = 1; k <= range; k++)
 					{
-						return linkGate((SGBaseTE) te);
+						Vector3 p = t.p(i, j, -k);
+						//System.out.printf("SGControllerTE: Looking for stargate at (%d,%d,%d)\n",
+						//	p.floorX(), p.floorY(), p.floorZ());
+						TileEntity te = worldObj.getBlockTileEntity(p.floorX(), p.floorY(), p.floorZ());
+						if (te instanceof SGBaseTE)
+						{
+							//System.out.printf("SGControllerTE: Found stargate at (%d,%d,%d)\n",
+							//	te.xCoord, te.yCoord, te.zCoord);
+							return linkGate((SGBaseTE) te);
+						}
 					}
-				}
-			}
 		}
 		return false;
 	}
