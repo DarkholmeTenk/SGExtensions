@@ -44,7 +44,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	@Override
 	public String[] getMethodNames()
 	{
-		return new String[]{"dialGate", "hasGate", "thisAddress", "findAddress","gateInfo","closeIris","openIris","toggleIris","magicDial"};
+		return new String[]{"dialGate","controlledDial", "disconnect", "hasGate", "thisAddress", "findAddress","gateInfo","closeIris","openIris","toggleIris","magicDial"};
 	}
 
 	@Override
@@ -56,26 +56,31 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 			case 0:
 				return new Object[]{DialGate(arguments[0].toString())};
 			case 1:
-				return new Object[]{hasGate()};
+				{
+					String add = arguments[0].toString();
+					int safe = (int) Double.parseDouble(arguments[1].toString());
+					int quick = (int) Double.parseDouble(arguments[2].toString());
+					return new Object[]{controlledDial(add,safe,quick)};
+				}
 			case 2:
-				return new Object[]{getThisAddress()};
+				return new Object[]{disconnectGate()};
 			case 3:
-				return new Object[]{findAddressedStargate(arguments[0].toString())};
+				return new Object[]{hasGate()};
 			case 4:
-				return new Object[]{getGateInfo()};
+				return new Object[]{getThisAddress()};
 			case 5:
-				return new Object[]{closeIris()};
+				return new Object[]{findAddressedStargate(arguments[0].toString())};
 			case 6:
-				return new Object[]{openIris()};
+				return new Object[]{getGateInfo()};
 			case 7:
-				return new Object[]{toggleIris()};
+				return new Object[]{closeIris()};
 			case 8:
+				return new Object[]{openIris()};
+			case 9:
+				return new Object[]{toggleIris()};
+			case 10:
 			{
-				String add = arguments[0].toString();
-				int safe = (int) Double.parseDouble(arguments[1].toString());
-				int quick = (int) Double.parseDouble(arguments[2].toString());
-				int pass = (int) Double.parseDouble(arguments[3].toString());
-				return new Object[]{magicDial(add,safe,quick,pass)};
+				
 			}
 			default:
 				return new Object[0];
@@ -128,6 +133,15 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		return null;
 	}
 	
+	public String disconnectGate()
+	{
+		if(hasGate())
+		{
+			return ownedGate.ControlledDisconnect();
+		}
+		return "Error - No gate";
+	}
+	
 	public String openIris()
 	{
 		if(hasGate())
@@ -176,13 +190,13 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 			if(state == SGState.Disconnecting) 	outState = "Disconnecting";
 			if(state == SGState.Idle) 			outState = "Idle";
 			if(state == SGState.InterDialling) 	outState = "Interdialling";
-			if(state == SGState.Transient) 		outState = "Transient";
-			retMap.put(1, getThisAddress());
-			retMap.put(2, ownedGate.numEngagedChevrons);
-			retMap.put(3, outState);
-			retMap.put(4, ownedGate.fuelBuffer);
-			retMap.put(5, ownedGate.getIrisType());
-			retMap.put(6, ownedGate.irisState());
+			if(state == SGState.Transient) 		outState = "Kawoosh";
+			retMap.put("address", getThisAddress());
+			retMap.put("numEngagedChevs", ownedGate.numEngagedChevrons);
+			retMap.put("state", outState);
+			retMap.put("fuelBuffer", ownedGate.fuelBuffer);
+			retMap.put("irisType", ownedGate.getIrisType());
+			retMap.put("irisState", ownedGate.irisState());
 			
 		}
 		else
@@ -198,27 +212,21 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		return ownedGate.connectOrDisconnect(address,null);
 	}
 	
-	public String magicDial(String address, int safe, int quick, int pass)
+	public String controlledDial(String address, int safe, int quick)
 	{
 		if(hasGate())
 		{
-			if(pass == 1397)
+			boolean safeDial = false;
+			boolean quickDial = false;
+			if(safe == 1)
 			{
-				if(safe == 1)
-				{
-					ownedGate.safeDial = true;
-				}
-				if(quick == 1)
-				{
-					ownedGate.quickDial = true;
-				}
-				return ownedGate.connectOrDisconnect(address, null);
+				safeDial = true;
 			}
-			else
+			if(quick == 1)
 			{
-				System.out.printf("WTF: %d",pass);
-				return "Error - Invalid Pass";
+				quickDial = true;
 			}
+			return ownedGate.ControlledConnect(address, null,safeDial,quickDial);
 		}
 		else
 		{

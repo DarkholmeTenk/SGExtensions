@@ -547,24 +547,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		return "Error - Not active";
 	}
 	
-	public String connectOrDisconnect(String address, EntityPlayer player)
-	{
-		//System.out.printf("SGBaseTE: %s: connectOrDisconnect('%s') in state %s by %s\n",
-				//side(), address, state, player);
-		if (state == SGState.Idle)
-		{
-			if (address.length() == SGAddressing.addressLength)
-				return connect(address, player);
-			else
-				return "Error - Invalid Address";
-		} 
-		else
-		{
-			return ControlledDisconnect();
-		}
-	}
-
-	String connect(String address, EntityPlayer player)
+	String ControlledConnect(String address, EntityPlayer player, boolean safe, boolean quick)
 	{
 		String homeAddress = findHomeAddress();
 		SGBaseTE dte = SGAddressing.findAddressedStargate(address);
@@ -586,7 +569,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			return "Error - Stargate has insufficient fuel";
 		}
 		modifiedFuelToOpen = fuelToOpen;
-		safeDial = safeDial || shouldSafeDial();
+		safeDial = safe && (safeDial || shouldSafeDial());
 		if(safeDial)
 		{
 			if(reloadFuel(fuelToOpen*SGExtensions.safeFuelMod))
@@ -598,7 +581,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				safeDial = false;
 			}
 		}
-		quickDial = (quickDial || shouldQuickDial());
+		quickDial = quick && (quickDial || shouldQuickDial());
 		if(quickDial)
 		{
 			if(reloadFuel(fuelToOpen*SGExtensions.quickFuelMod))
@@ -621,6 +604,28 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		startDiallingStargate(address, dte, true);
 		dte.startDiallingStargate(homeAddress, this, false);
 		return "Dialling";
+	}
+	
+	public String connectOrDisconnect(String address, EntityPlayer player)
+	{
+		//System.out.printf("SGBaseTE: %s: connectOrDisconnect('%s') in state %s by %s\n",
+				//side(), address, state, player);
+		if (state == SGState.Idle)
+		{
+			if (address.length() == SGAddressing.addressLength)
+				return connect(address, player);
+			else
+				return "Error - Invalid Address";
+		} 
+		else
+		{
+			return ControlledDisconnect();
+		}
+	}
+
+	String connect(String address, EntityPlayer player)
+	{
+		return ControlledConnect(address,player,true,true);
 	}
 
 	void diallingFailure(EntityPlayer player, String mess)
