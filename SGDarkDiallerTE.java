@@ -50,6 +50,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	@Override
 	public Object[] callMethod(IComputerAccess computer, int method, Object[] arguments) throws Exception
 	{
+		System.out.printf("METHOD CALL!!!");
 		switch (method)
 		{
 			case 0:
@@ -295,6 +296,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		}
 		else
 		{
+			//System.out.printf("My coords are real\n");
 			TileEntity gate;
 			if(isLinkedToStargate)
 			{
@@ -307,9 +309,9 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 			Trans3 t = localToGlobalTransformation();
 			for (int i = -range; i <= range; i++)
 				for (int j = -range; j <= range; j++)
-					for (int k = 1; k <= range; k++)
+					for (int k = -range; k <= range; k++)
 					{
-						Vector3 p = t.p(i, j, -k);
+						Vector3 p = t.p(i, j, k);
 						//System.out.printf("SGControllerTE: Looking for stargate at (%d,%d,%d)\n",
 						//	p.floorX(), p.floorY(), p.floorZ());
 						TileEntity te = worldObj.getBlockTileEntity(p.floorX(), p.floorY(), p.floorZ());
@@ -337,8 +339,10 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	
 	public boolean hasGate()
 	{
+		//System.out.printf("Checking for gate\n");
 		if(ownedGate == null)
 		{
+			//System.out.printf("TEST - NO GATE FOUND\n");
 			return findGate();
 		}
 		else

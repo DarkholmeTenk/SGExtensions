@@ -13,6 +13,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -204,7 +205,7 @@ public class SGExtensions
 	}
 	void registerBlocks()
 	{
-		diallerBlock = new SGDarkDiallerBlock(ConfigHandler.blockDiallerID, 0).setBlockName("diallerblock");
+		diallerBlock = new SGDarkDiallerBlock(ConfigHandler.blockDiallerID).setBlockName("diallerblock");
 		sgDarkPowerBlock = new SGDarkPowerBlock(ConfigHandler.blockPowererID, 0).setBlockName("powererblock");
 		sgBaseBlock = new SGBaseBlock(ConfigHandler.blockSGBaseID).setBlockName("stargateBase");
 		sgRingBlock = new SGRingBlock(ConfigHandler.blockSGRingID).setBlockName("stargateRing");

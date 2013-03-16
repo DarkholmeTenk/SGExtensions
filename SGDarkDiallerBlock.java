@@ -6,11 +6,12 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class SGDarkDiallerBlock extends BlockContainer
+public class SGDarkDiallerBlock extends BaseBlock<SGDarkDiallerTE>
 {
-	public SGDarkDiallerBlock(int i, int j)
+	Class<? extends TileEntity> TEClass = null;
+	public SGDarkDiallerBlock(int i)
 	{
-		super(i, j, Material.rock);
+		super(i, Material.rock, SGDarkDiallerTE.class);
 		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 

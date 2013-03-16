@@ -1074,9 +1074,15 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		{
 			if(SGExtensions.irisKillClearInv)
 			{
-				((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+				if(entity instanceof EntityPlayerMP)
+				{
+					((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+				}
 			}
-			((EntityPlayerMP)entity).attackEntityFrom(recieveDamage, 1000);
+			if(entity instanceof EntityPlayerMP)
+			{
+				((EntityPlayerMP)entity).attackEntityFrom(recieveDamage, 1000);
+			}
 		}
 	}
 
