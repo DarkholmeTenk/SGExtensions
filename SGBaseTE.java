@@ -775,7 +775,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				irisTimer--;
 				if(irisTimer <= 0)
 				{
-					System.out.printf("Iris Slide: (%d)\n", irisSlide);
+					//System.out.printf("Iris Slide: (%d)\n", irisSlide);
 					irisTimer = irisTimerVal;
 					if(irisState() == "Iris - Opening")
 					{

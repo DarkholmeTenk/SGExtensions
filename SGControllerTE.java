@@ -52,7 +52,7 @@ public class SGControllerTE extends BaseTileEntity
 
 	void checkForLink()
 	{
-		System.out.printf("SGControllerTE.checkForLink at (%d,%d,%d)\n", xCoord, yCoord, zCoord);
+		//System.out.printf("SGControllerTE.checkForLink at (%d,%d,%d)\n", xCoord, yCoord, zCoord);
 		if (!isLinkedToStargate)
 		{
 			Trans3 t = localToGlobalTransformation();

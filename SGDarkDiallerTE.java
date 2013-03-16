@@ -50,7 +50,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	@Override
 	public Object[] callMethod(IComputerAccess computer, int method, Object[] arguments) throws Exception
 	{
-		System.out.printf("METHOD CALL!!!");
+		//System.out.printf("METHOD CALL!!!");
 		switch (method)
 		{
 			case 0:
