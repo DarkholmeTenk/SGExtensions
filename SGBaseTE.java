@@ -35,9 +35,14 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 {
@@ -57,6 +62,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	final static int quickInterDiallingTime = 2;
 	final static int transientDuration = 20; // ticks
 	final static int disconnectTime = 30; // ticks
+	private int timeSinceLastTeleport = -1;
 
 	final static double openingTransientIntensity = 1.3; //2.0;
 	final static double openingTransientRandomness = 0.25;
@@ -95,6 +101,10 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public boolean safeDial = false;
 	public boolean quickDial = false;
+	
+	private ArrayList safeEnts = new ArrayList<Entity>();
+	private HashMap safeTime = new HashMap();
+	final static int safeTicks = 20*10;
 	
 	IInventory inventory = new InventoryBasic("Stargate", 7);
 	final static int upgradeSlots = 3;
@@ -648,6 +658,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public String disconnect()
 	{
+		safeEnts.clear();
+		safeTime.clear();
 		//System.out.printf("SGBaseTE: %s: disconnect()\n", side());
 		SGBaseTE dte = SGBaseTE.at(connectedLocation);
 		if (dte != null)
@@ -710,6 +722,53 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			//performPendingTeleportations();
 			fuelUsage();
 			useFuel();
+			if(state == SGState.Connected)
+			{
+				if(timeSinceLastTeleport > 0)
+				{
+					if(timeSinceLastTeleport == 0)
+					{
+						disconnect();
+					}
+					timeSinceLastTeleport--;
+				}
+				List<Integer> removeArray = new ArrayList<Integer>();
+				if (safeEnts.size() > 0)
+				{
+					//System.out.printf("SGSC: S(%d)\n",safeEnts.size());
+					int length = safeEnts.size();
+					for(int i = 0;i<length;i++)
+					{
+						Entity ent = (Entity) safeEnts.get(i);
+						UUID entityID = ent.getPersistentID();
+						//System.out.printf("SGSC: TL(%d)\n", (int)safeTime.get(entityID));
+						safeTime.put(entityID,(int)(safeTime.get(entityID)) - 1);
+						if((int)safeTime.get(entityID) <= 0)
+						{
+							removeArray.add(i);
+						}
+					}
+					if(removeArray.size() > 0)
+					{
+						for(int i = 0;i<removeArray.size();i++)
+						{
+							int toRemove = removeArray.get(i);
+							//System.out.printf("SGSC: REMOVING (%d)\n",toRemove);
+							safeEnts.remove(toRemove);
+							if(removeArray.size() > i)
+							{
+								for(int j = i+1;j<removeArray.size();j++)
+								{
+									if(removeArray.get(j) > removeArray.get(i))
+									{
+										removeArray.set(j,removeArray.get(j)-1);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			
 			if(irisState() == "Iris - Opening" || irisState() == "Iris - Closing")
 			{
@@ -1028,60 +1087,92 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 //		System.out.printf("SGBaseTE.sendClientEvent: %s, %d\n", type, data);
 //		worldObj.addBlockEvent(xCoord, yCoord, zCoord, getBlockType().blockID, type.ordinal(), data);
 //	}
+	
+	public boolean isEntitySafe(Entity entity)
+	{
+		//System.out.printf("SGSC: Checking for safety\n");
+		if(safeEnts.size() >0)
+		{
+			//System.out.printf("SGSC: (%d)\n",safeEnts.size());
+			Object[] SE = safeEnts.toArray();
+			for(int i=0;i<safeEnts.size();i++)
+			{
+				//System.out.printf("SGSC: i (%d,%s,%s)\n",i,((Entity)(SE[i])).getPersistentID().toString(),entity.getPersistentID().toString());
+				if(((Entity)(SE[i])).getPersistentID() == entity.getPersistentID())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public void entityInPortal(Entity entity)
 	{
 		if (state == SGState.Connected && (isInitiator) && irisState() != "Iris - Closed")
 		{
-			//System.out.printf("SGBaseTE.entityInPortal: global (%.3f, %.3f, %.3f)\n",
-			//	entity.posX, entity.posY, entity.posZ);
-			Trans3 t = localToGlobalTransformation();
-			//System.out.printf("SGBaseTE.entityInPortal: Transformation:\n");
-			//t.dump();
-			Vector3 p1 = t.ip(entity.posX, entity.posY, entity.posZ);
-			Vector3 p0 = t.ip(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
-			//System.out.printf("SGBaseTE.entityInPortal: local (%.3f, %.3f, %.3f)\n", p1.x, p1.y, p1.z);
-			//System.out.printf("SGBaseTE.entityInPortal: prev local position = %s\n", p0);
-			//System.out.printf("SGBaseTE.entityInPortal: z0 = %.3f z1 = %.3f\n", p0.z, p1.z);
-			if (p0.z >= 0.0 && p1.z < 0.0)
+			if(!isEntitySafe(entity))
 			{
-				//System.out.printf("SGBaseTE.entityInPortal: Passed through event horizon of stargate at (%d,%d,%d) in %s\n",
-						//xCoord, yCoord, zCoord, worldObj);
-				SGBaseTE dte = getConnectedStargateTE();
-				if (dte != null)
+				//System.out.printf("SGBaseTE.entityInPortal: global (%.3f, %.3f, %.3f)\n",
+				//	entity.posX, entity.posY, entity.posZ);
+				Trans3 t = localToGlobalTransformation();
+				//System.out.printf("SGBaseTE.entityInPortal: Transformation:\n");
+				//t.dump();
+				Vector3 p1 = t.ip(entity.posX, entity.posY, entity.posZ);
+				Vector3 p0 = t.ip(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
+				//System.out.printf("SGBaseTE.entityInPortal: local (%.3f, %.3f, %.3f)\n", p1.x, p1.y, p1.z);
+				//System.out.printf("SGBaseTE.entityInPortal: prev local position = %s\n", p0);
+				//System.out.printf("SGBaseTE.entityInPortal: z0 = %.3f z1 = %.3f\n", p0.z, p1.z);
+				if (p0.z >= 0.0 && p1.z < 0.0)
 				{
-					if(dte.irisState() != "Iris - Closed")
+					//System.out.printf("SGBaseTE.entityInPortal: Passed through event horizon of stargate at (%d,%d,%d) in %s\n",
+							//xCoord, yCoord, zCoord, worldObj);
+					SGBaseTE dte = getConnectedStargateTE();
+					if (dte != null)
 					{
-						Trans3 dt = dte.localToGlobalTransformation();
-						teleportEntity(entity, t, dt, connectedLocation.dimension);
-					}
-					else if(entity instanceof EntityPlayerMP)
-					{
-						if(SGExtensions.irisKillClearInv)
+						if(dte.irisState() != "Iris - Closed")
 						{
-							((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+							dte.addEntToSafety(entity);
+							Trans3 dt = dte.localToGlobalTransformation();
+							teleportEntity(entity, t, dt, connectedLocation.dimension);
+							//addEntToSafety(entity);
+							timeSinceLastTeleport = 30*20;
 						}
-						((EntityPlayerMP)entity).attackEntityFrom(irisDamage, 1000);
-					}
-					else
-					{
-						entity.setDead();
+						else if(entity instanceof EntityPlayerMP)
+						{
+							if(SGExtensions.irisKillClearInv)
+							{
+								((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+							}
+							((EntityPlayerMP)entity).attackEntityFrom(irisDamage, 1000);
+						}
+						else
+						{
+							entity.setDead();
+						}
 					}
 				}
 			}
 		}
 		else if(state == SGState.Connected && isInitiator == false)
 		{
-			if(SGExtensions.irisKillClearInv)
+			if(!isEntitySafe(entity))
 			{
+				if(SGExtensions.irisKillClearInv)
+				{
+					if(entity instanceof EntityPlayerMP)
+					{
+						((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+					}
+				}
 				if(entity instanceof EntityPlayerMP)
 				{
-					((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+					((EntityPlayerMP)entity).attackEntityFrom(recieveDamage, 1000);
 				}
-			}
-			if(entity instanceof EntityPlayerMP)
-			{
-				((EntityPlayerMP)entity).attackEntityFrom(recieveDamage, 1000);
+				else
+				{
+					entity.setDead();
+				}
 			}
 		}
 	}
@@ -1118,6 +1209,23 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			((EntityLiving) entity).setPositionAndUpdate(p.x, p.y, p.z);
 		} else
 			entity.setLocationAndAngles(p.x, p.y, p.z, (float) a, entity.rotationPitch);
+	}
+	
+	public void addEntToSafety(Entity Ent)
+	{
+		if(isEntitySafe(Ent))
+		{
+			//System.out.printf("Entity is already safe\n");
+			UUID EUID = Ent.getPersistentID();
+			safeTime.put(EUID,safeTicks);
+		}
+		else
+		{
+			//System.out.printf("Entity is unsafe\n");
+			safeEnts.add(Ent);
+			UUID EUID = Ent.getPersistentID();
+			safeTime.put(EUID,safeTicks);
+		}
 	}
 
 	void teleportToOtherDimension(Entity entity, Vector3 p, Vector3 v, double a, int dimension)
