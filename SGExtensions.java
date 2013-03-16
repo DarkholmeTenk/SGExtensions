@@ -62,8 +62,9 @@ public class SGExtensions
 	public static int fuelStore = 50;
 	public static int maxOpenTime;
 	
-	public static boolean gateHardMode;
 	public static boolean fuelHardMode;
+	public static boolean recieveHardMode;
+	public static boolean recieveKill;
 	public static ItemStack stargateFuel;
 
 	public static NaquadahOreWorldGen naquadahOreGenerator;
@@ -93,7 +94,8 @@ public class SGExtensions
 		maxOpenTime = ConfigHandler.maxOpen;
 		irisKillClearInv = ConfigHandler.irisKillClear;
 		fuelHardMode = ConfigHandler.fuelHardMode;
-		gateHardMode = ConfigHandler.gateHardMode;
+		recieveHardMode = ConfigHandler.recieveHardMode;
+		recieveKill = ConfigHandler.recieveKill;
 		
 		registerItems();
         registerBlocks();

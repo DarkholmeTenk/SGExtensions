@@ -532,7 +532,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	{
 		if(state != SGState.Idle)
 		{
-			boolean canDisconnect = isInitiator; //isInitiator;
+			boolean canDisconnect = isInitiator  || !SGExtensions.recieveHardMode; //isInitiator;
 			SGBaseTE dte = getConnectedStargateTE();
 			boolean validConnection =
 					(dte != null) && (dte.getConnectedStargateTE() == this);
@@ -560,20 +560,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		} 
 		else
 		{
-			boolean canDisconnect = isInitiator; //isInitiator;
-			SGBaseTE dte = getConnectedStargateTE();
-			boolean validConnection =
-					(dte != null) && (dte.getConnectedStargateTE() == this);
-			if (canDisconnect || !validConnection)
-			{
-				if (state != SGState.Disconnecting)
-					 return disconnect();
-			} 
-			else if (!canDisconnect)
-				return "Error - Not initiator";
-				//System.out.printf("SGBaseTE.connectOrDisconnect: Not initiator\n");
+			return ControlledDisconnect();
 		}
-		return "Error - Unknown #001";
 	}
 
 	String connect(String address, EntityPlayer player)
@@ -724,7 +712,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			useFuel();
 			if(state == SGState.Connected)
 			{
-				if(timeSinceLastTeleport > 0)
+				if(timeSinceLastTeleport >= 0)
 				{
 					if(timeSinceLastTeleport == 0)
 					{
@@ -1109,7 +1097,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public void entityInPortal(Entity entity)
 	{
-		if (state == SGState.Connected && (isInitiator) && irisState() != "Iris - Closed")
+		if (state == SGState.Connected && (isInitiator || !SGExtensions.recieveHardMode) && irisState() != "Iris - Closed")
 		{
 			if(!isEntitySafe(entity))
 			{
@@ -1154,24 +1142,27 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				}
 			}
 		}
-		else if(state == SGState.Connected && isInitiator == false)
+		else if(state == SGState.Connected && isInitiator == false && irisState() != "Iris - Closed")
 		{
-			if(!isEntitySafe(entity))
+			if(SGExtensions.recieveKill)
 			{
-				if(SGExtensions.irisKillClearInv)
+				if(!isEntitySafe(entity))
 				{
+					if(SGExtensions.irisKillClearInv)
+					{
+						if(entity instanceof EntityPlayerMP)
+						{
+							((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+						}
+					}
 					if(entity instanceof EntityPlayerMP)
 					{
-						((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+						((EntityPlayerMP)entity).attackEntityFrom(recieveDamage, 1000);
 					}
-				}
-				if(entity instanceof EntityPlayerMP)
-				{
-					((EntityPlayerMP)entity).attackEntityFrom(recieveDamage, 1000);
-				}
-				else
-				{
-					entity.setDead();
+					else
+					{
+						entity.setDead();
+					}
 				}
 			}
 		}

@@ -29,6 +29,8 @@ public class ConfigHandler
 	public static int itemHardID;
 	public static boolean fuelHardMode;
 	public static boolean gateHardMode;
+	public static boolean recieveKill;
+	public static boolean recieveHardMode;
 
 	public static void loadConfig(FMLPreInitializationEvent e)
 	{
@@ -68,6 +70,12 @@ public class ConfigHandler
 		Property fHard = config.get("Gate Configuration","Fuel is in hard mode",true);
 		fuelHardMode = fHard.getBoolean(true);
 		
+		Property recHard = config.get("Gate Configuration","Going through recieving gate is possible/Closing recieving gate is possible",false);
+		recieveHardMode = recHard.getBoolean(false);
+		
+		Property recKill = config.get("Gate Configuration","Going through recieving gate kills",true);
+		recieveKill = recKill.getBoolean(true);
+		
 		Property ring= config.getBlock("SGRingID",3747,"The BlockID for the SG Ring and Chevron Blocks.");
 		blockSGRingID = ring.getInt();
 
@@ -105,7 +113,6 @@ public class ConfigHandler
 		itemHardID = hardID.getInt();
 		
 		
-
 		config.save();
 	}
 
