@@ -742,8 +742,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						Entity ent = (Entity) safeEnts.get(i);
 						UUID entityID = ent.getPersistentID();
 						//System.out.printf("SGSC: TL(%d)\n", (int)safeTime.get(entityID));
-						safeTime.put(entityID,(int)(safeTime.get(entityID)) - 1);
-						if((int)safeTime.get(entityID) <= 0)
+						safeTime.put(entityID,Integer.parseInt((safeTime.get(entityID).toString())) - 1);
+						if(Integer.parseInt(safeTime.get(entityID).toString()) <= 0)
 						{
 							removeArray.add(i);
 						}
