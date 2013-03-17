@@ -101,6 +101,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public boolean safeDial = false;
 	public boolean quickDial = false;
+	public boolean isAdminGate = false;
 	
 	private ArrayList safeEnts = new ArrayList<Entity>();
 	private HashMap safeTime = new HashMap();
@@ -131,6 +132,26 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			return (SGBaseTE) te;
 		else
 			return null;
+	}
+	
+	public void checkUpgrades()
+	{
+		for (int i=0;i<upgradeSlots;i++)
+		{
+			ItemStack slotItem = inventory.getStackInSlot(i+fuelSlots);
+			if(slotItem != null)
+			{
+				if(slotItem.getItem() instanceof SGDarkMultiItem)
+				{
+					if(((SGDarkMultiItem)(slotItem.getItem())).isUpgradeType("Stargate Upgrade - Admin",slotItem))
+					{
+						inventory.setInventorySlotContents(i+fuelSlots, null);
+						isAdminGate = true;
+						onInventoryChanged();
+					}
+				}
+			}
+		}
 	}
 	
 	public String getIrisType()
@@ -715,6 +736,10 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			//performPendingTeleportations();
 			fuelUsage();
 			useFuel();
+			if(isAdminGate)
+			{
+				fuelBuffer = maxFuelBuffer;
+			}
 			if(state == SGState.Connected)
 			{
 				if(timeSinceLastTeleport >= 0)
@@ -874,6 +899,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 					//System.out.printf("SGBaseTE: Valid item in %d\n", i);
 					fuelBuffer += fuelPerItem;
 					decrStackSize(i, 1);
+					onInventoryChanged();
 					markBlockForUpdate();
 					return true;
 				}

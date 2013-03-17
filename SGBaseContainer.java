@@ -69,6 +69,7 @@ public class SGBaseContainer extends BaseContainer
 	void addUpgradeSlots()
 	{
 		int n = te.upgradeSlots;
+		ItemStack AU = ((SGDarkMultiItem) (SGExtensions.sgDarkUpgrades)).getUpgrade("Stargate Upgrade - Admin");
 		for (int i = 0; i < n; i++)
 		{
 			int row = i / numUpdradeSlotColumns;
@@ -77,7 +78,7 @@ public class SGBaseContainer extends BaseContainer
 			int y = upgradeSlotsY + row * 18;
 			Slot TSlot = new SGDarkUpgradeSlot(te, tx, x, y);
 			ItemStack TI = ((SGDarkMultiItem) (SGExtensions.sgDarkUpgrades)).getUpgrade(upgradeList[i]);
-			((SGDarkUpgradeSlot)TSlot).setAllowedItemArray(new ItemStack[] {TI});
+			((SGDarkUpgradeSlot)TSlot).setAllowedItemArray(new ItemStack[] {TI,AU});
 			addSlotToContainer(TSlot);
 			tx++;
 		}
@@ -97,6 +98,18 @@ public class SGBaseContainer extends BaseContainer
 			case 0:
 				te.fuelBuffer = value;
 				break;
+		}
+	}
+	
+	@Override
+	public void detectAndSendChanges()
+	{
+		te.checkUpgrades();
+		super.detectAndSendChanges();
+		for (int i = 0; i < crafters.size(); i++)
+		{
+			ICrafting crafter = (ICrafting) crafters.get(i);
+			sendStateTo(crafter);
 		}
 	}
 

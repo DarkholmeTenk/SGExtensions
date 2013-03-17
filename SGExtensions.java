@@ -188,12 +188,13 @@ public class SGExtensions
 	void registerMultiItems()
 	{
 		//UPGRADES
-		String[] a = new String[]  {"Stargate Upgrade - Fast Dial", "Stargate Upgrade - Safe Dial", "Stargate Upgrade - Iris"};
+		String[] a = new String[]  {"Stargate Upgrade - Fast Dial", "Stargate Upgrade - Safe Dial", "Stargate Upgrade - Iris","Stargate Upgrade - Admin"};
 		String [] b =  new String[] 
 		{	"Allows instant dialling#at 10 * energy cost",
 			"Allows dialling with no kawoosh#at 4 * energy cost",
-			"Allows computer controlled iris"};
-		int[] c = new int[]{71,72,70};
+			"Allows computer controlled iris",
+			"No energy usage, unbreakable, etc"};
+		int[] c = new int[]{71,72,70,73};
 		SGDarkMultiItem TempUpgrades = registerMI(ConfigHandler.itemUpgradesID,a,c,b,1);
 		GameRegistry.registerItem((Item) TempUpgrades, "sgDarkUpgrades");
 		sgDarkUpgrades = TempUpgrades;
