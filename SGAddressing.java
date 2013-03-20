@@ -6,6 +6,9 @@
 
 package sgextensions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;

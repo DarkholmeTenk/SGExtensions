@@ -215,6 +215,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 			}
 			te.disconnect();
 			te.unlinkFromController();
+			SGExtensions.AddressStore.removeAddress(te.findHomeAddress());
 			te.isMerged = false;
 			world.markBlockForUpdate(x, y, z);
 			unmergeRing(world, x, y, z);

@@ -11,6 +11,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -72,7 +73,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	final static int maxFuelBuffer = SGExtensions.fuelStore * fuelPerItem;
 	final static int fuelToOpen = fuelPerItem;
 	private int modifiedFuelToOpen;
-	final static int irisTimerVal = 2;
+	final static int irisTimerVal = 1;
 
 	static Random random = new Random();
 	static DamageSource transientDamage = new TransientDamageSource();
@@ -111,6 +112,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	final static int upgradeSlots = 3;
 	final static int fuelSlots = 4;
 	final static int fuelSlot = 0;
+	static int timeToList = 20;
+	static boolean hasNBTListed = false;
 
 	//ArrayList<PendingTeleportation> pendingTeleportations = new ArrayList<PendingTeleportation>();
 	//public String homeAddress = "";
@@ -340,6 +343,12 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		isInitiator = nbt.getBoolean("isInitiator");
 		timeout = nbt.getInteger("timeout");
 		fuelBuffer = nbt.getInteger("fuelBuffer");
+		isAdminGate= nbt.getBoolean("isAdminGate");
+		if(!hasNBTListed)
+		{
+			timeToList = 10;
+			hasNBTListed = true;
+		}
 		//System.out.printf("SGBaseTE.readFromNBT: (%d; %d, %d, %d) state = %s(%d)\n",
 		//	dimension(), xCoord, yCoord, zCoord, state, state.ordinal());
 	}
@@ -366,6 +375,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		nbt.setBoolean("isInitiator", isInitiator);
 		nbt.setInteger("timeout", timeout);
 		nbt.setInteger("fuelBuffer", fuelBuffer);
+		nbt.setBoolean("isAdminGate",isAdminGate);
 		if (!worldObj.isRemote)
 		{
 			//System.out.printf("SGBaseTE.writeToNBT: (%d; %d, %d, %d) state = %s\n",
@@ -532,9 +542,9 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		if (isLinkedToController)
 		{
 			SGControllerTE cte = getLinkedControllerTE();
+			clearLinkToController();
 			if (cte != null)
 				cte.clearLinkToStargate();
-			clearLinkToController();
 		}
 	}
 
@@ -590,6 +600,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			return "Error - Stargate has insufficient fuel";
 		}
 		modifiedFuelToOpen = fuelToOpen;
+		
 		safeDial = safe && (safeDial || shouldSafeDial());
 		if(safeDial)
 		{
@@ -602,6 +613,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				safeDial = false;
 			}
 		}
+		
 		quickDial = quick && (quickDial || shouldQuickDial());
 		if(quickDial)
 		{
@@ -733,6 +745,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	{
 		if (isMerged)
 		{
+			SGExtensions.AddressStore.addAddress(findHomeAddress());
 			//performPendingTeleportations();
 			fuelUsage();
 			useFuel();
@@ -1031,27 +1044,27 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			else
 			{
 				enterState(SGState.InterDialling, interDiallingTime);
-			}
+			}	
 		else
 			enterState(SGState.Idle, 0);
 	}
 	
 	boolean shouldSafeDial()
 	{
-		if(irisState() != "Iris - Open" && irisState() != "Error - No iris")
-		{
-			return true;
-		}
-		else
+		if(irisState() == "Iris - Open" || irisState() == "Error - No Iris")
 		{
 			ItemStack X = getStackInSlot(5);
 			if(X != null)
 			{
-				if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Safe Dial",X.getItemDamage()))
+				if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Safe Dial",X))
 				{
 					return true;
 				}
 			}
+		}
+		else
+		{
+			return true;
 		}
 		return false;
 	}
@@ -1063,7 +1076,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			ItemStack X = getStackInSlot(4+i);
 			if(X != null)
 			{
-				if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Fast Dial",X.getItemDamage()))
+				if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Fast Dial",X))
 				{
 					return true;
 				}
@@ -1080,7 +1093,6 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			//sendClientEvent(SGEvent.Connect, 0);
 			if(safeDial == true)
 			{
-				//System.out.printf("SGBaseTE: Safe dial\n");
 				enterState(SGState.Connected, 20*60*SGExtensions.maxOpenTime);
 				safeDial = shouldSafeDial();
 				quickDial = shouldQuickDial();
@@ -1089,7 +1101,6 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			{
 				safeDial = shouldSafeDial();
 				quickDial = shouldQuickDial();
-				//System.out.printf("SGBaseTE: Unsafe dial\n");
 				enterState(SGState.Transient, transientDuration);
 			}
 			playSoundEffect("sgextensions.sg_open", 1.0F, 1.0F);
@@ -1277,7 +1288,9 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		player.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(player.dimension,
 				(byte) player.worldObj.difficultySetting, newWorld.getWorldInfo().getTerrainType(),
 				newWorld.getHeight(), player.theItemInWorldManager.getGameType()));
+		oldWorld.getEntityTracker().removeEntityFromAllTrackingPlayers(player);
 		oldWorld.removeEntity(player);
+		oldWorld.getEntityTracker().updateTrackedEntities();
 		player.isDead = false;
 		newWorld.spawnEntityInWorld(player);
 		player.setLocationAndAngles(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);

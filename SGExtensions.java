@@ -4,9 +4,12 @@ import ic2.api.Ic2Recipes;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.ServerStarting;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -14,10 +17,13 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,7 +60,7 @@ public class SGExtensions
 	public static boolean addOres;
 	public static boolean irisKillClearInv;
 	
-	public static int irisFrames = 10;
+	public static int irisFrames = 20;
 	
 	public static int bcPowerPerFuel;
 	public static int icPowerPerFuel;
@@ -72,6 +78,7 @@ public class SGExtensions
 	public static Block sgDarkPowerBlock;
 	public static final int GUIELEMENT_GATE = 1;
 	public static final int GUIELEMENT_DHD = 2;
+	public static SGDarkAddressStore AddressStore;
 
 	@Mod.PreInit()
 	public void preInit(FMLPreInitializationEvent e)
@@ -105,6 +112,13 @@ public class SGExtensions
         registerWorldGenerators();
 		proxy.ProxyInit();
 		NetworkRegistry.instance().registerGuiHandler(this,new GuiHandler());
+		AddressStore = new SGDarkAddressStore();
+	}
+	
+	@ServerStarting
+	public void serverStarting(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new SGDarkECommand());
 	}
 	
 	SGDarkMultiItem registerMI(int ID,String[] sN, int[] icons,String[] info,int StackSize)
