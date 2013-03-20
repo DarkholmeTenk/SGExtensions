@@ -27,12 +27,10 @@ public class SGDarkECommand extends CommandBase
 			}
 			else
 			{
-				switch(par[0].toLowerCase())
-				{
-					case("close"):if(size > 1){closeGate(par[1],sen);}break;
-					case("to"):if(size > 1){toGate(par[1],sen);}break;
-					case("list"):gateList(sen);
-				}
+				String sC = par[0].toLowerCase();
+				if(sC == "close" && size > 1)closeGate(par[1],sen);
+				if(sC == "to" &&size > 1)toGate(par[1],sen);
+				if(sC == "list")gateList(sen);
 			}
 		}
 	}
