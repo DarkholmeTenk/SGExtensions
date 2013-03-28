@@ -1,0 +1,13 @@
+<project name="SGExtensions" default="main">
+<property environment="env"/>
+<!-- Properties -->
+
+
+<target name="getbuild">
+  <copy file="/root/.jenkins/jobs/SGExtensions/custombuild.xml" todir="/root/.jenkins/workspace/SGExtensions"/>
+</target>
+
+<!-- Default target to run -->
+<target name="main" depends="getbuild"/>
+
+</project>
