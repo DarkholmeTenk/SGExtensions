@@ -230,6 +230,15 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		return true;
 	}
 	
+	private void irisChangeNotify()
+	{
+		int x = this.xCoord;
+		int y = this.yCoord+1;
+		int z = this.zCoord;
+		World world = worldObj;
+		world.setBlockMetadataWithNotify(x, y, z, 1 - world.getBlockMetadata(x,y,z));
+	}
+	
 	public String openIris()
 	{
 		String IT = getIrisType();
@@ -247,6 +256,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				{
 					IrisStateFromNum(0);
 				}
+				irisChangeNotify();
 				return "Iris opened";
 			}
 			else if(IrisStateToNum() == 1 || IrisStateToNum() == 3)
@@ -274,6 +284,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				{
 					IrisStateFromNum(2);
 				}
+				irisChangeNotify();
 				return "Iris closed";
 			}
 			else if(IrisStateToNum() == 1 || IrisStateToNum() == 3)
@@ -782,6 +793,10 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						UUID entityID = ent.getPersistentID();
 						//System.out.printf("SGSC: TL(%d)\n", (int)safeTime.get(entityID));
 						safeTime.put(entityID,Integer.parseInt((safeTime.get(entityID).toString())) - 1);
+						if(ent.posY < 0)
+						{
+							ent.setPosition(this.xCoord, this.yCoord+1, this.zCoord);
+						}
 						if(Integer.parseInt(safeTime.get(entityID).toString()) <= 0)
 						{
 							removeArray.add(i);
@@ -822,6 +837,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						if(irisSlide >= SGExtensions.irisFrames)
 						{
 							IrisStateFromNum(0);
+							irisChangeNotify();
 						}
 					}
 					else
@@ -830,6 +846,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						if(irisSlide == 0)
 						{
 							IrisStateFromNum(2);
+							irisChangeNotify();
 						}
 					}
 					markBlockForUpdate();
