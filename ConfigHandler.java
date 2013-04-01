@@ -71,7 +71,7 @@ public class ConfigHandler
 		fuelHardMode = fHard.getBoolean(true);
 		
 		Property recHard = config.get("Gate Configuration","Going through recieving gate is possible/Closing recieving gate is possible",false);
-		recieveHardMode = recHard.getBoolean(false);
+		recieveHardMode = !recHard.getBoolean(false);
 		
 		Property recKill = config.get("Gate Configuration","Going through recieving gate kills",true);
 		recieveKill = recKill.getBoolean(true);

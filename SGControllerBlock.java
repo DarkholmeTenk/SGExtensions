@@ -53,6 +53,7 @@ public class SGControllerBlock extends Base4WayBlock<SGControllerTE>
 		}
 		if (cte.isLinkedToStargate)
 		{
+			cte.clearLinkToStargate();
 			SGBaseTE gte = cte.getLinkedStargateTE();
 			if (gte != null)
 				gte.clearLinkToController();

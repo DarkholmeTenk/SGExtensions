@@ -222,6 +222,14 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		return "Error - Unknown state";
 	}
 	
+	public boolean solidIris()
+	{
+		String iS = irisState();
+		if(iS == "Iris - Open" || iS == "Error - Unknown state" || iS == "Error - No Iris")
+			return false;
+		return true;
+	}
+	
 	public String openIris()
 	{
 		String IT = getIrisType();
@@ -632,7 +640,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			diallingFailure(player, "Stargate has insufficient fuel");
 			return "Error - Stargate has insufficient fuel";
 		}
-		dte.safeDial = this.safeDial || dte.shouldSafeDial();
+		dte.safeDial = (this.safeDial && !this.solidIris()) || dte.solidIris();
 		dte.quickDial = this.quickDial;
 		startDiallingStargate(address, dte, true);
 		dte.startDiallingStargate(homeAddress, this, false);
@@ -1051,20 +1059,15 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	
 	boolean shouldSafeDial()
 	{
-		if(irisState() == "Iris - Open" || irisState() == "Error - No Iris")
-		{
-			ItemStack X = getStackInSlot(5);
-			if(X != null)
-			{
-				if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Safe Dial",X))
-				{
-					return true;
-				}
-			}
-		}
-		else
-		{
+		if(this.solidIris())
 			return true;
+		ItemStack X = getStackInSlot(5);
+		if(X != null)
+		{
+			if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Safe Dial",X))
+			{
+				return true;
+			}
 		}
 		return false;
 	}
@@ -1077,9 +1080,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			if(X != null)
 			{
 				if (((SGDarkMultiItem)(X.getItem())).isUpgradeType("Stargate Upgrade - Fast Dial",X))
-				{
 					return true;
-				}
 			}
 		}
 		return false;
@@ -1172,7 +1173,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						{
 							if(SGExtensions.irisKillClearInv)
 							{
-								((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+								if(!((EntityPlayer)entity).capabilities.isCreativeMode)
+									((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
 							}
 							((EntityPlayerMP)entity).attackEntityFrom(irisDamage, 1000);
 						}
@@ -1194,7 +1196,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 					{
 						if(entity instanceof EntityPlayerMP)
 						{
-							((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
+							if(!((EntityPlayer)entity).capabilities.isCreativeMode)
+								((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
 						}
 					}
 					if(entity instanceof EntityPlayerMP)

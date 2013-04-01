@@ -11,6 +11,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -18,7 +19,7 @@ import java.util.Random;
 
 public class SGPortalBlock extends Block
 {
-
+	
 	public SGPortalBlock(int id)
 	{
 		super(id, Material.rock);
@@ -47,19 +48,8 @@ public class SGPortalBlock extends Block
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World A, int X, int Y, int Z)
 	{
-		/*
-		//System.out.println("TEST: "+ X + "," + Y + "," + Z);
-		SGBaseTE te = getStargateTE(A,X,Y,Z);
-		if(te != null)
-		{
-			String IS = te.irisState();
-			//System.out.println(IS);
-			if(IS != "Error - No Iris" && IS != "Error - Unknown state" && IS != "Iris - Open")
-			{
-				return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)X + 0, (double)Y + 0, (double)Z + 0, (double)X + 1, (double)Y + 1, (double)Z + 1);
-			}
-		}
-		return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(0, 0, 0, 0, 0, 0);*/
+		if(isIris(A,X,Y,Z))
+			return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)X, (double)Y, (double)Z, (double)X + 1, (double)Y + 1, (double)Z + 1);
 		return null;
 	}
 	
@@ -91,6 +81,66 @@ public class SGPortalBlock extends Block
 			SGBaseTE te = getStargateTE(world, x, y, z);
 			if (te != null)
 				te.entityInPortal(entity);
+		}
+	}
+	
+	private boolean isIris(World world, int x,int y,int z)
+	{
+		int Meta = world.getBlockMetadata(x,y,z);
+		return isIris(Meta);
+	}
+	
+	private boolean isIris(int Meta)
+	{
+		if(Meta == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+	{
+		if(isIris(par1IBlockAccess.getBlockMetadata(par2, par3, par4)))
+			return false;
+		return true;
+	}
+	
+	@Override
+	public void onNeighborBlockChange(World world,int x,int y, int z, int blockID)
+	{
+		if(!world.isRemote)
+		{
+			System.out.printf("TEST01\n");
+			SGBaseTE SG = getStargateTE(world,x,y,z);
+			int meta = world.getBlockMetadata(x, y, z);
+			if(SG != null)
+			{
+				if(SG.solidIris())
+				{
+					if(meta != 1)
+					{
+						world.setBlockMetadataWithNotify(x, y, z, 1);
+						world.markBlockForUpdate(x,y,z);
+					}
+				}
+				else
+				{
+					if(meta == 1)
+					{
+						world.setBlockMetadataWithNotify(x, y, z, 0);
+						world.markBlockForUpdate(x,y,z);
+					}
+				}
+			}
+			else
+			{
+				if(meta == 1)
+				{
+					world.setBlockMetadataWithNotify(x, y, z, 0);
+					world.markBlockForUpdate(x,y,z);
+				}
+			}
 		}
 	}
 
