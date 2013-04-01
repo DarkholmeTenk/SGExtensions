@@ -111,7 +111,6 @@ public class SGPortalBlock extends Block
 	{
 		if(!world.isRemote)
 		{
-			System.out.printf("TEST01\n");
 			SGBaseTE SG = getStargateTE(world,x,y,z);
 			int meta = world.getBlockMetadata(x, y, z);
 			if(SG != null)
