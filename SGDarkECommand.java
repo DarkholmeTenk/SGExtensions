@@ -14,6 +14,7 @@ public class SGDarkECommand extends CommandBase
 	@Override
 	public void processCommand(ICommandSender sen, String[] par)
 	{
+		System.out.println("CMDTEST");
 		if(sen.canCommandSenderUseCommand(3, "stargate"))
 		{
 			int size = par.length;
@@ -28,9 +29,13 @@ public class SGDarkECommand extends CommandBase
 			else
 			{
 				String sC = par[0].toLowerCase();
-				if(sC == "close" && size > 1)closeGate(par[1],sen);
-				if(sC == "to" &&size > 1)toGate(par[1],sen);
-				if(sC == "list")gateList(sen);
+				System.out.printf("CMDTEST: %s\n",sC);
+				if(sC.equals("close") && size > 1)
+					closeGate(par[1],sen);
+				if(sC.equals("to") &&size > 1)
+					toGate(par[1],sen);
+				if(sC.equals("list"))
+					gateList(sen);
 			}
 		}
 	}
@@ -44,7 +49,10 @@ public class SGDarkECommand extends CommandBase
 		}
 		else
 		{
-			sen.sendChatToPlayer(gate.ControlledDisconnect());
+			String E = gate.ControlledDisconnect();
+			if(E == "Error - Not initiator")
+				E = E + " - Gate connected to: " + gate.dialledAddress;
+			sen.sendChatToPlayer(E);
 		}
 	}
 	
@@ -63,6 +71,7 @@ public class SGDarkECommand extends CommandBase
 	
 	private void gateList(ICommandSender sen)
 	{
+		System.out.printf("CMDTEST: listTest\n");
 		sen.sendChatToPlayer("--STARGATE ADDRESSES--");
 		String[] adds = SGExtensions.AddressStore.getAddresses();
 		if(adds.length > 0)
