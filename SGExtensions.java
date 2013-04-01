@@ -71,6 +71,7 @@ public class SGExtensions
 	public static boolean fuelHardMode;
 	public static boolean recieveHardMode;
 	public static boolean recieveKill;
+	public static boolean explosionsEnabled = true;
 	public static ItemStack stargateFuel;
 
 	public static NaquadahOreWorldGen naquadahOreGenerator;

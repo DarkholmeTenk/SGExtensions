@@ -191,21 +191,14 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 	public void breakBlock(World world, int x, int y, int z, int id, int data)
 	{
 		SGBaseTE te = getTileEntity(world, x, y, z);
-		if(te.isAdminGate)
-		{
-			world.setBlockAndMetadataWithNotify(x,y,z,id,data);
-		}
-		else
-		{
-			unmerge(world, x, y, z);
-		}
 		super.breakBlock(world, x, y, z, id, data);
+		unmerge(world, x, y, z);
 	}
 
 	public void unmerge(World world, int x, int y, int z)
 	{
 		SGBaseTE te = getTileEntity(world, x, y, z);
-		boolean goBang = false;
+		boolean goBang = SGExtensions.explosionsEnabled && !te.isAdminGate;
 		if (te != null /*&& te.isMerged*/)
 		{
 			if (te.isMerged && te.state == SGState.Connected)

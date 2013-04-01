@@ -14,6 +14,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -151,19 +152,7 @@ public class SGRingBlock extends BaseBlock<SGRingTE>
 		super.breakBlock(world, x, y, z, id, data);
 		if (te.isMerged)
 		{
-			TileEntity base = world.getBlockTileEntity(te.baseX,te.baseY,te.baseZ);
-			if(base instanceof SGBaseTE)
-			{
-				if(((SGBaseTE)base).isAdminGate)
-				{
-					world.setBlockAndMetadataWithNotify(x, y, z, id, data);
-					SGRingTE Test = (SGRingTE) world.getBlockTileEntity(x, y, z);
-				}
-				else
-				{
-					updateBaseBlocks(world, x, y, z, te);
-				}
-			}
+			updateBaseBlocks(world, x, y, z, te);
 		}
 	}
 
