@@ -18,6 +18,7 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -31,7 +32,8 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-@Mod(modid = "SGExtensions", name = "SG Darkcraft Edition", version = "pre1")
+@Mod(modid = "SGExtensions", name = "SG Darkcraft Edition", version = "pre2")
+
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
 public class SGExtensions
 {
@@ -79,7 +81,10 @@ public class SGExtensions
 	public static Block sgDarkPowerBlock;
 	public static final int GUIELEMENT_GATE = 1;
 	public static final int GUIELEMENT_DHD = 2;
+	public static final int GUIELEMENT_GDO = 3;
 	public static SGDarkAddressStore AddressStore;
+	
+	public static SGDarkGDO sgDarkGDOItem;
 
 	@Mod.PreInit()
 	public void preInit(FMLPreInitializationEvent e)
@@ -113,6 +118,7 @@ public class SGExtensions
         registerWorldGenerators();
 		proxy.ProxyInit();
 		NetworkRegistry.instance().registerGuiHandler(this,new GuiHandler());
+		LanguageRegistry.instance().addStringLocalization("itemGroup.tabStargate", "Stargate");
 		AddressStore = new SGDarkAddressStore();
 	}
 	
@@ -279,8 +285,12 @@ public class SGExtensions
         naquadahIngot = new BaseItem(ConfigHandler.itemNaqIngotID, "/sgextensions/resources/textures.png").setItemName("naquadahIngot").setIconIndex(0x42);
         sgCoreCrystal = new BaseItem(ConfigHandler.itemCrystalCoreID,"/sgextensions/resources/textures.png").setItemName("sgCrystalCore").setIconIndex(0x44);
         sgControllerCrystal = new BaseItem(ConfigHandler.itemCrystalControlID,"/sgextensions/resources/textures.png").setItemName("sgCrystalControl").setIconIndex(0x45);
+        sgDarkGDOItem = new SGDarkGDO(ConfigHandler.itemGDOID);
+		
+        GameRegistry.registerItem(sgDarkGDOItem, "toolGDO");
+        LanguageRegistry.addName(sgDarkGDOItem, "Stargate GDO");
         
-		GameRegistry.registerItem(naquadah,"itemNaquadah");
+        GameRegistry.registerItem(naquadah,"itemNaquadah");
         LanguageRegistry.addName(naquadah,"Naquadah");
 
 		GameRegistry.registerItem(naquadahIngot, "itemNaqIngot");
@@ -357,4 +367,13 @@ public class SGExtensions
 		//System.out.printf("SGCraft.onChunkSave: (%d, %d)\n", chunk.xPosition, chunk.zPosition);
 		SGChunkData.onChunkSave(e);
 	}
+	
+	public static CreativeTabs sgCreative = new CreativeTabs("tabStargate")
+	{
+		public ItemStack getIconItemStack()
+		{
+			return new ItemStack(sgBaseBlock,1,0);
+		}
+	};
+	
 }

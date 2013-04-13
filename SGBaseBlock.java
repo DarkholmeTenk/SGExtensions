@@ -42,7 +42,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 	{
 		super(id, Material.rock /*SGRingBlock.ringMaterial*/, SGBaseTE.class);
 		setHardness(1.5F);
-		setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(SGExtensions.sgCreative);
 	}
 
 	@Override

@@ -12,6 +12,8 @@ import java.util.Map;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
 
 public class SGAddressing
 {
@@ -100,6 +102,7 @@ public class SGAddressing
 		{
 			//System.out.printf("SGAddressing.findAddressedStargate: world = %s\n", world);
 			Chunk chunk = world.getChunkFromChunkCoords(chunkx, chunkz);
+			
 			//System.out.printf("SGAddressing.findAddressedStargate: chunk = %s\n", chunk);
 			if (chunk != null)
 				for (Object te : chunk.chunkTileEntityMap.values())
@@ -108,6 +111,26 @@ public class SGAddressing
 					if (te instanceof SGBaseTE)
 						return (SGBaseTE) te;
 				}
+		}
+		else
+		{
+			System.out.printf("SGTEST:attempttoloaddim %d\n",dimension);
+			DimensionManager.initDimension(dimension);
+			world = DimensionManager.getWorld(dimension);
+			if(world != null)
+			{
+				//System.out.printf("SGAddressing.findAddressedStargate: world = %s\n", world);
+				Chunk chunk = world.getChunkFromChunkCoords(chunkx, chunkz);
+				
+				//System.out.printf("SGAddressing.findAddressedStargate: chunk = %s\n", chunk);
+				if (chunk != null)
+					for (Object te : chunk.chunkTileEntityMap.values())
+					{
+						//System.out.printf("SGAddressing.findAddressedStargate: te = %s\n", te);
+						if (te instanceof SGBaseTE)
+							return (SGBaseTE) te;
+					}
+			}
 		}
 		return null;
 	}

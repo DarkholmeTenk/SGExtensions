@@ -18,7 +18,7 @@ public class BaseItem extends Item
 	{
 		super(id);
 		textureFile = texture;
-		setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(SGExtensions.sgCreative);
 	}
 
 	@Override

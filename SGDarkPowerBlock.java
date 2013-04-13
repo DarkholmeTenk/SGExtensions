@@ -12,7 +12,7 @@ public class SGDarkPowerBlock extends BlockContainer
 	public SGDarkPowerBlock(int i, int j)
 	{
 		super(i, j, Material.rock);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		this.setCreativeTab(SGExtensions.sgCreative);
 	}
 
 	public String getTextureFile()

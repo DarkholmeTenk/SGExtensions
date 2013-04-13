@@ -40,8 +40,14 @@ public class SGRingBlock extends BaseBlock<SGRingTE>
 	{
 		super(id, Material.rock /*ringMaterial*/, SGRingTE.class);
 		setHardness(1.5F);
-		setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(SGExtensions.sgCreative);
 		registerSubItemNames();
+	}
+	
+	@Override
+	public boolean canDragonDestroy(World w, int x,int y, int z)
+	{
+		return false;
 	}
 
 	@Override
@@ -154,6 +160,54 @@ public class SGRingBlock extends BaseBlock<SGRingTE>
 		{
 			updateBaseBlocks(world, x, y, z, te);
 		}
+	}
+	
+	public void updateRingBlocks(SGBaseTE base,World w,int X,int Y,int Z)
+	{
+		if(base != null)
+		{
+			if(base.isAdminGate)
+			{
+				if(this.getBlockHardness(w, X, Y, Z) == 1.5F)
+				{
+					this.setBlockUnbreakable();
+					w.markBlockForUpdate(X, Y, Z);
+				}
+			}
+			else
+			{
+				if(this.getBlockHardness(w, X, Y, Z) != 1.5F)
+				{
+					this.setHardness(1.5F);
+					w.markBlockForUpdate(X, Y, Z);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void onNeighborBlockChange(World world,int x,int y, int z, int blockID)
+	{
+		updateRingBlocks(getBase(world,x,y,z),world,x,y,z);
+	}
+	
+	public SGBaseTE getBase(World world, int x, int y, int z)
+	{
+//		te.isMerged, te.baseX, te.baseY, te.baseZ);
+		for (int i = -2; i <= 2; i++)
+			for (int j = -4; j <= 0; j++)
+				for (int k = -2; k <= 2; k++)
+				{
+					int xb = x + i;
+					int yb = y + j;
+					int zb = z + k;
+					TileEntity te = world.getBlockTileEntity(x, y, z);
+					if (te instanceof SGBaseTE)
+					{
+						return (SGBaseTE)te;
+					}
+				}
+		return null;
 	}
 
 	void updateBaseBlocks(World world, int x, int y, int z, SGRingTE te)

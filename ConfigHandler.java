@@ -27,6 +27,7 @@ public class ConfigHandler
 	public static int itemCrystalControlID;
 	public static int itemUpgradesID;
 	public static int itemHardID;
+	public static int itemGDOID;
 	public static boolean fuelHardMode;
 	public static boolean gateHardMode;
 	public static boolean recieveKill;
@@ -106,8 +107,11 @@ public class ConfigHandler
 		Property crystalControl = config.getItem("SGCrystalControlID",5504,"The ItemID for the Stargate Controller Crystal.");
 		itemCrystalControlID = crystalControl.getInt();
 		
-		Property upgradesID = config.getItem("SGUpdatedsID",5505,"The ItemID for the Stargate Upgrades.");
+		Property upgradesID = config.getItem("SGUpgradesID",5505,"The ItemID for the Stargate Upgrades.");
 		itemUpgradesID = upgradesID.getInt();
+		
+		Property itemGDOsID = config.getItem("SGGdoID",5507,"The ItemID for the Stargate GDO.");
+		itemGDOID = itemGDOsID.getInt();
 		
 		Property hardID = config.getItem("SGHardID",5506,"The ItemID for Naquadriah.");
 		itemHardID = hardID.getInt();

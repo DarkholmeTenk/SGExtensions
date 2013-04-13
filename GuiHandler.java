@@ -15,47 +15,75 @@ import cpw.mods.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		TileEntity ringTE = world.getBlockTileEntity(x,y,z);
-		if(ringTE instanceof SGBaseTE)
+		if(SGExtensions.GUIELEMENT_GDO == id)
 		{
-			return new SGBaseContainer(player, (SGBaseTE) ringTE);
+			if(player.getCurrentEquippedItem() != null)
+			{
+				if(player.getCurrentEquippedItem().getItem() instanceof SGDarkGDO)
+				{
+					System.out.printf("TEST:SRG\n");
+					return new SGDarkGDOContainer(player);
+				}
+			}
 		}
-		else if(ringTE instanceof SGRingTE)
+		else
 		{
-			int baseX, baseY, baseZ;
-			baseX = ((SGRingTE) ringTE).baseX;
-			baseY = ((SGRingTE) ringTE).baseY;
-			baseZ = ((SGRingTE) ringTE).baseZ;
-			TileEntity ringBaseTE = world.getBlockTileEntity(baseX, baseY, baseZ);
+			TileEntity ringTE = world.getBlockTileEntity(x,y,z);
 			if(ringTE instanceof SGBaseTE)
 			{
-				return new SGBaseContainer(player, (SGBaseTE) ringBaseTE);
+				return new SGBaseContainer(player, (SGBaseTE) ringTE);
+			}
+			else if(ringTE instanceof SGRingTE)
+			{
+				int baseX, baseY, baseZ;
+				baseX = ((SGRingTE) ringTE).baseX;
+				baseY = ((SGRingTE) ringTE).baseY;
+				baseZ = ((SGRingTE) ringTE).baseZ;
+				TileEntity ringBaseTE = world.getBlockTileEntity(baseX, baseY, baseZ);
+				if(ringTE instanceof SGBaseTE)
+				{
+					return new SGBaseContainer(player, (SGBaseTE) ringBaseTE);
+				}
 			}
 		}
 		return null;
 	}
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		TileEntity ringTE = world.getBlockTileEntity(x,y,z);
-		if(ringTE instanceof SGBaseTE)
+		if(SGExtensions.GUIELEMENT_GDO == id)
 		{
-			return new SGBaseScreen(player, (SGBaseTE) ringTE);
-		}
-		else if(ringTE instanceof SGRingTE)
-		{
-			int baseX, baseY, baseZ;
-			baseX = ((SGRingTE) ringTE).baseX;
-			baseY = ((SGRingTE) ringTE).baseY;
-			baseZ = ((SGRingTE) ringTE).baseZ;
-			TileEntity ringBaseTE = world.getBlockTileEntity(baseX, baseY, baseZ);
-			if(ringTE instanceof SGBaseTE)
+			if(player.getCurrentEquippedItem() != null)
 			{
-				return new SGBaseScreen(player, (SGBaseTE) ringBaseTE);
+				if(player.getCurrentEquippedItem().getItem() instanceof SGDarkGDO)
+				{
+					System.out.printf("TEST:CRG\n");
+					return new SGDarkGDOScreen(player, player.getCurrentEquippedItem());
+				}
 			}
 		}
-		else if(ringTE instanceof SGControllerTE)
+		else
 		{
-			return new SGControllerScreen(player, world, x, y, z);
+			TileEntity ringTE = world.getBlockTileEntity(x,y,z);
+			if(ringTE instanceof SGBaseTE)
+			{
+				return new SGBaseScreen(player, (SGBaseTE) ringTE);
+			}
+			else if(ringTE instanceof SGRingTE)
+			{
+				int baseX, baseY, baseZ;
+				baseX = ((SGRingTE) ringTE).baseX;
+				baseY = ((SGRingTE) ringTE).baseY;
+				baseZ = ((SGRingTE) ringTE).baseZ;
+				TileEntity ringBaseTE = world.getBlockTileEntity(baseX, baseY, baseZ);
+				if(ringTE instanceof SGBaseTE)
+				{
+					return new SGBaseScreen(player, (SGBaseTE) ringBaseTE);
+				}
+			}
+			else if(ringTE instanceof SGControllerTE)
+			{
+				return new SGControllerScreen(player, world, x, y, z);
+			}
 		}
 		return null;
 	}

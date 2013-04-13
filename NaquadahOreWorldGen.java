@@ -113,7 +113,7 @@ public class NaquadahOreWorldGen implements IWorldGenerator
 						{
 							if (odds(32))
 							{
-								System.out.printf("NaquadahOreWorldGen: generating under lava at (%d, %d, %d)\n", x0 + x, y, z0 + z);
+								//System.out.printf("NaquadahOreWorldGen: generating under lava at (%d, %d, %d)\n", x0 + x, y, z0 + z);
 								generateNode(naquadah, x, y, z, 2, 1, 2);
 							}
 						}
@@ -126,7 +126,7 @@ public class NaquadahOreWorldGen implements IWorldGenerator
 				int z = random.nextInt(16);
 				if (getBlock(x, y, z) == stone)
 				{
-					System.out.printf("NaquadahOreWorldGen: generating randomly at (%d, %d, %d)\n", x0 + x, y, z0 + z);
+					//System.out.printf("NaquadahOreWorldGen: generating randomly at (%d, %d, %d)\n", x0 + x, y, z0 + z);
 					generateNode(naquadah, x, y, z, 2, 2, 2);
 				}
 			}

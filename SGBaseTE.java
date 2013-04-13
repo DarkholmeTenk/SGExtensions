@@ -114,6 +114,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	final static int fuelSlot = 0;
 	static int timeToList = 20;
 	static boolean hasNBTListed = false;
+	
+	private String radioMessage;
 
 	//ArrayList<PendingTeleportation> pendingTeleportations = new ArrayList<PendingTeleportation>();
 	//public String homeAddress = "";
@@ -684,7 +686,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	{
 		if(player != null)
 			player.addChatMessage(mess);
-		playSoundEffect("sgextensions.sg_abort", 1.0F, 1.0F);
+		playSoundEffect("sgextensions.sg_abort", 2.0F, 1.0F);
 	}
 
 	String findHomeAddress()
@@ -1570,8 +1572,40 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		return inventory;
 	}
 
-}
+////////////////////////////////////////////////
+///////////////////COMPUTERCRAFT EVENTS/////////
+////////////////////////////////////////////////
 
+	public void sendComputerEvent(String event,String data, String data2)
+	{
+		
+	}
+	
+////////////////////////////////////////////////
+///////////////////RADIO AND GDO RELATED////////
+////////////////////////////////////////////////
+	public boolean sendRadioSignal(String signal)
+	{
+		System.out.printf("Radiostream: %s\n", signal);
+		if(state == SGState.Connected)
+		{
+			SGBaseTE te = this.getConnectedStargateTE();
+			if(te != null)
+			{
+				te.recieveRadioSignal(signal);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void recieveRadioSignal(String signal)
+	{
+		radioMessage = signal;
+		sendComputerEvent("radio",signal,null);
+	}
+
+}
 ////////////////////////////////////////////////
 ///////////////////TELEPORTERS AND DAMAGE/////
 //////////////////////////////////////

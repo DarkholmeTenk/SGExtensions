@@ -107,6 +107,12 @@ public class SGPortalBlock extends Block
 	}
 	
 	@Override
+	public boolean canDragonDestroy(World w, int x,int y, int z)
+	{
+		return false;
+	}
+	
+	@Override
 	public void onNeighborBlockChange(World world,int x,int y, int z, int blockID)
 	{
 		if(!world.isRemote)

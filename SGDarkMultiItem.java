@@ -67,7 +67,7 @@ public class SGDarkMultiItem extends Item
 	{
 		super(par1);
 		setHasSubtypes(true);
-		setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(SGExtensions.sgCreative);
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package sgextensions;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -12,7 +13,7 @@ public class SGDarkDiallerBlock extends BaseBlock<SGDarkDiallerTE>
 	public SGDarkDiallerBlock(int i)
 	{
 		super(i, Material.rock, SGDarkDiallerTE.class);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		this.setCreativeTab(SGExtensions.sgCreative);
 	}
 
 	public String getTextureFile()
@@ -28,6 +29,13 @@ public class SGDarkDiallerBlock extends BaseBlock<SGDarkDiallerTE>
 		else if(i == 1)
 			return 1;
 		return 0;
+	}
+	
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player)
+	{
+		super.onBlockPlacedBy(world, x, y, z, player);
+		getTileEntity(world, x, y, z).hasGate();
 	}
 
 
