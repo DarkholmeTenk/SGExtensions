@@ -75,7 +75,7 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 								if(te instanceof SGBaseTE)
 								{
 									fGate = true;
-									((SGBaseTE)te).sendRadioSignal(code + "," + player.username);
+									((SGBaseTE)te).sendRadioSignal(code + "," + player.username + "," + player.hashCode());
 								}
 							}
 						}
