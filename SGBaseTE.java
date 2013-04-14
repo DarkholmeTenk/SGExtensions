@@ -151,8 +151,10 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 					if(((SGDarkMultiItem)(slotItem.getItem())).isUpgradeType("Stargate Upgrade - Admin",slotItem))
 					{
 						inventory.setInventorySlotContents(i+fuelSlots, null);
+						inventory.decrStackSize(i+fuelSlots, 1);
 						isAdminGate = true;
 						onInventoryChanged();
+						markBlockForUpdate();
 					}
 				}
 			}
@@ -1632,6 +1634,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	{
 		radioMessage = signal;
 		sendComputerEvent("radio",signal,null);
+		markBlockForUpdate();
 	}
 
 }

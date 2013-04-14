@@ -7,6 +7,9 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public class SGDarkGDOScreen extends SGScreen
 {
@@ -23,11 +26,81 @@ public class SGDarkGDOScreen extends SGScreen
 	
 	private boolean isSendDown = false;
 	
+	boolean gate = false;
+	int gX,gY,gZ;
+	int delay = 1;
+	String message = "";
+	
 	private HashMap<String,SGDarkScreenClicker> clickers = new HashMap<String, SGDarkScreenClicker>();
 	
 	EntityPlayer owner;
 	
 	private String code;
+	
+	public String getMessage()
+	{
+		SGBaseTE g = findNearestStargate(owner.worldObj,(int) owner.posX,(int) owner.posY,(int) owner.posZ);
+		if(g != null)
+		{
+			return g.getRadioSignal();
+		}
+		return "";
+	}
+	
+	public SGBaseTE findNearestStargate(World w,int x,int y,int z)
+	{
+		if(gate == true)
+		{
+			TileEntity te = w.getBlockTileEntity(gX,gY,gZ);
+			if(te != null)
+			{
+				if(te instanceof SGBaseTE)
+				{
+					delay = 1;
+					return (SGBaseTE) te;
+				}
+			}
+			gate = false;
+		}
+		delay--;
+		if(delay == 0)
+		{
+			if(!gate)
+			{
+				Vec3 pos = owner.getPosition(1);
+				int radius = 7;
+				int zx = (int) pos.xCoord;
+				int zy = (int) pos.yCoord;
+				int zz = (int) pos.zCoord;
+				boolean fGate = false;
+				for(int i=-radius;i<=radius && !fGate;i++)
+				{
+					for(int j=-radius;j<=radius && !fGate;j++)
+					{
+						for(int k=-radius;k<=radius && !fGate;k++)
+						{
+							if((Math.pow(i,2) + Math.pow(j,2) + Math.pow(k,2)) <= Math.pow(radius, 2))
+							{
+								TileEntity te = w.getBlockTileEntity(i+x, j+y, k+z);
+								if(te != null)
+								{
+									if(te instanceof SGBaseTE)
+									{
+										gate = true;
+										gX = te.xCoord;
+										gY = te.yCoord;
+										gZ = te.zCoord;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		delay = 20;
+		return null;
+	}
 
 	private int[] numXY(int num)
 	{
@@ -100,6 +173,7 @@ public class SGDarkGDOScreen extends SGScreen
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f,int a,int b)
 	{
+		message = getMessage();
 		xO = (width - guiWidth)/2;
 		yO = (height - guiHeight)/2;
 		bindTexture("/sgextensions/resources/gdo_gui.png", 256, 64);
@@ -137,6 +211,9 @@ public class SGDarkGDOScreen extends SGScreen
 			bindTexture("/sgextensions/resources/gdo_gui.png", 256, 64);
 			drawTexturedRect(xO +170,yO + 15,38,18,160,46);
 		}	
+		if(message.length() >= 10)
+			message = message.substring(0, 9);
+		fontRenderer.drawString(message, xO + 95, yO + 20, color, false);
 	}
 
 }

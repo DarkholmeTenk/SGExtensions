@@ -50,6 +50,12 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 	{
 		return false;
 	}
+	
+	@Override
+	public boolean canDragonDestroy(World w, int x,int y, int z)
+	{
+		return false;
+	}
 
 	@Override
 	public boolean canHarvestBlock(EntityPlayer player, int meta)

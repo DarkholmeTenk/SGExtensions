@@ -49,11 +49,6 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 		}
 	}
 	
-	public static void requestGdoMessage(EntityPlayer player)
-	{
-		
-	}
-	
 	public static void gdoData(EntityPlayer player,NBTTagCompound nbt)
 	{
 		if(nbt.getBoolean("gdoSend"))

@@ -20,7 +20,7 @@ public class SGControllerBlock extends Base4WayBlock<SGControllerTE>
 		super(id, Material.rock /*SGRingBlock.ringMaterial*/, SGControllerTE.class);
 		setHardness(1.5F);
 		blockIndexInTexture = 0x0a;
-		setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(SGExtensions.sgCreative);
 	}
 
 //	@Override
@@ -39,6 +39,12 @@ public class SGControllerBlock extends Base4WayBlock<SGControllerTE>
 	{
 		super.onBlockPlacedBy(world, x, y, z, player);
 		getTileEntity(world, x, y, z).checkForLink();
+	}
+	
+	@Override
+	public boolean canDragonDestroy(World w, int x,int y, int z)
+	{
+		return false;
 	}
 
 	@Override

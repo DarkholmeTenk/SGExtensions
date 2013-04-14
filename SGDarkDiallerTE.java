@@ -2,6 +2,7 @@ package sgextensions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
@@ -11,7 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 
-public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, IComputerAccess
+public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 {
 	public int x, y, z;
 	public SGBaseTE ownedGate = null;
@@ -33,6 +34,8 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 	public final int minDimension = -1;
 	public final int maxDimension = minDimension + dimensionPower - 1;
 	private final int range = 6;
+	
+	private HashMap<String,IComputerAccess> comps = new HashMap<String,IComputerAccess>();
 	//Bits of the SGAddressing class required for the Dialling Computer to work its magic.
 
 	@Override
@@ -45,7 +48,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 	public String[] getMethodNames()
 	{
 		return new String[]{"info","dialGate","controlledDial", "disconnect", "hasGate", "thisAddress", "findAddress","gateInfo","closeIris","openIris","toggleIris","getRadio","sendRadio"};
-	}
+	}	
 
 	@Override
 	public Object[] callMethod(IComputerAccess computer, int method, Object[] arguments) throws Exception
@@ -83,7 +86,10 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 			case 11:
 				return new Object[]{getRadio()};
 			case 12:
-				return new Object[]{sendRadio(arguments)};
+			{
+				//System.out.println("SDFSCXC");
+				return new Object[]{this.sendRadio(arguments)};
+			}
 			default:
 				return new Object[0];
 		}
@@ -92,7 +98,13 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 	public void queueEv(String e,String a,String b)
 	{
 		String[] list = {e,a,b};
-		queueEvent("Stargate",list);
+		Object[] keys = comps.keySet().toArray();
+		int Size = keys.length;
+		for (int i=0;i<Size;i++)
+		{
+			IComputerAccess tV = comps.get(keys[i].toString());
+			tV.queueEvent("Stargate",list);
+		}
 	}
 	
 	@Override
@@ -124,11 +136,19 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 	@Override
 	public void attach(IComputerAccess computer)
 	{
+		if(!comps.containsValue(computer))
+		{
+			comps.put("" + computer.hashCode(), computer); 
+		}
 	}
 
 	@Override
 	public void detach(IComputerAccess computer)
 	{
+		if(comps.containsValue(computer))
+		{
+			comps.remove("" + computer.hashCode());
+		}
 	}
 	
 	public SGBaseTE getLinkedGate()
@@ -150,12 +170,29 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 		return "Error - No gate";
 	}
 	
+	public String sendRadio(String out)
+	{
+		System.out.printf("SDFSCV:"+out+"\n");
+		if(hasGate())
+		{
+			ownedGate.sendRadioSignal(out);
+			return "Message sent";
+		}
+		return "Error - No gate";
+	}
+	
 	public String sendRadio(Object[] args)
 	{
+		//System.out.printf("SDFSCV:"+args[1].toString()+"\n");
 		if(hasGate())
 		{
 			if(args.length == 1)
-				ownedGate.sendRadioSignal(args[1].toString());
+			{
+				Boolean ret = ownedGate.sendRadioSignal(args[0].toString());
+				if(ret)
+					return "Message sent";
+				return "Message failed";
+			}
 		}
 		return "Error - No gate";
 	}
@@ -334,7 +371,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, ICom
 		x = this.xCoord;
 		y = this.yCoord;
 		z = this.zCoord;
-		if(x==0 && y == 0 & z == 0)
+		if(x==0 && y == 0 && z == 0)
 		{
 			return false;
 		}
