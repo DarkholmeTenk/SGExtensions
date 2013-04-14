@@ -55,11 +55,10 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 		{
 			String code = nbt.getString("gdoCode");
 			World w = player.worldObj;
-			Vec3 pos = player.getPosition(1);
 			int radius = 7;
-			int x = (int) pos.xCoord;
-			int y = (int) pos.yCoord;
-			int z = (int) pos.zCoord;
+			int x = (int) player.posX;
+			int y = (int) player.posY;
+			int z = (int) player.posZ;
 			boolean fGate = false;
 			for(int i=-radius;i<=radius && !fGate;i++)
 			{
@@ -75,7 +74,7 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 								if(te instanceof SGBaseTE)
 								{
 									fGate = true;
-									((SGBaseTE)te).sendRadioSignal(code + "," + player.username + "," + player.hashCode());
+									((SGBaseTE)te).sendRadioSignal(code + "," + player.username + "," + player.username.hashCode());
 								}
 							}
 						}

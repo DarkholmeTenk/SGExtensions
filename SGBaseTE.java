@@ -611,63 +611,67 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	String ControlledConnect(String address, EntityPlayer player, boolean safe, boolean quick)
 	{
 		String homeAddress = findHomeAddress();
-		SGBaseTE dte = SGAddressing.findAddressedStargate(address);
-		//System.out.printf("SGBaseTE.connect: addressed TE = %s\n", dte);
-		if (dte == null)
+		if(address.toUpperCase() != homeAddress)
 		{
-			diallingFailure(player, "No stargate at address " + address);
-			return "Error - No stargate at address " + address;
-		}
-		this.radioMessage = null;
-		//System.out.printf("SGBaseTE.connect: addressed TE state = %s\n", dte.state);
-		if (dte.state != SGState.Idle)
-		{
-			diallingFailure(player, "Stargate at address " + address + " is busy");
-			return "Error - Stargate at address " + address + " is busy";
-		}
-		if (!reloadFuel(fuelToOpen))
-		{
-			diallingFailure(player, "Stargate has insufficient fuel");
-			return "Error - Stargate has insufficient fuel";
-		}
-		modifiedFuelToOpen = fuelToOpen;
-		
-		safeDial = safe && (safeDial || shouldSafeDial());
-		if(safeDial)
-		{
-			if(reloadFuel(fuelToOpen*SGExtensions.safeFuelMod))
+			SGBaseTE dte = SGAddressing.findAddressedStargate(address);
+			//System.out.printf("SGBaseTE.connect: addressed TE = %s\n", dte);
+			if (dte == null)
 			{
-				modifiedFuelToOpen = modifiedFuelToOpen * SGExtensions.safeFuelMod;
+				diallingFailure(player, "No stargate at address " + address);
+				return "Error - No stargate at address " + address;
 			}
-			else
+			this.radioMessage = null;
+			//System.out.printf("SGBaseTE.connect: addressed TE state = %s\n", dte.state);
+			if (dte.state != SGState.Idle)
 			{
-				safeDial = false;
+				diallingFailure(player, "Stargate at address " + address + " is busy");
+				return "Error - Stargate at address " + address + " is busy";
 			}
-		}
-		
-		quickDial = quick && (quickDial || shouldQuickDial());
-		if(quickDial)
-		{
-			if(reloadFuel(fuelToOpen*SGExtensions.quickFuelMod))
+			if (!reloadFuel(fuelToOpen))
 			{
-				modifiedFuelToOpen = modifiedFuelToOpen * SGExtensions.quickFuelMod;
+				diallingFailure(player, "Stargate has insufficient fuel");
+				return "Error - Stargate has insufficient fuel";
 			}
-			else
+			modifiedFuelToOpen = fuelToOpen;
+			
+			safeDial = safe && (safeDial || shouldSafeDial());
+			if(safeDial)
 			{
-				quickDial = false;
+				if(reloadFuel(fuelToOpen*SGExtensions.safeFuelMod))
+				{
+					modifiedFuelToOpen = modifiedFuelToOpen * SGExtensions.safeFuelMod;
+				}
+				else
+				{
+					safeDial = false;
+				}
 			}
+			
+			quickDial = quick && (quickDial || shouldQuickDial());
+			if(quickDial)
+			{
+				if(reloadFuel(fuelToOpen*SGExtensions.quickFuelMod))
+				{
+					modifiedFuelToOpen = modifiedFuelToOpen * SGExtensions.quickFuelMod;
+				}
+				else
+				{
+					quickDial = false;
+				}
+			}
+			
+			if (!reloadFuel(modifiedFuelToOpen))
+			{
+				diallingFailure(player, "Stargate has insufficient fuel");
+				return "Error - Stargate has insufficient fuel";
+			}
+			dte.safeDial = (this.safeDial && !this.solidIris()) || dte.solidIris();
+			dte.quickDial = this.quickDial;
+			startDiallingStargate(address, dte, true);
+			dte.startDiallingStargate(homeAddress, this, false);
+			return "Dialling";
 		}
-		
-		if (!reloadFuel(modifiedFuelToOpen))
-		{
-			diallingFailure(player, "Stargate has insufficient fuel");
-			return "Error - Stargate has insufficient fuel";
-		}
-		dte.safeDial = (this.safeDial && !this.solidIris()) || dte.solidIris();
-		dte.quickDial = this.quickDial;
-		startDiallingStargate(address, dte, true);
-		dte.startDiallingStargate(homeAddress, this, false);
-		return "Dialling";
+		return "Cannot dial self";
 	}
 	
 	public String connectOrDisconnect(String address, EntityPlayer player)
