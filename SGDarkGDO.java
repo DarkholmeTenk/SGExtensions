@@ -35,9 +35,12 @@ public class SGDarkGDO extends BaseItem
 	@Override
 	public void addInformation(ItemStack IS, EntityPlayer player, List data,boolean Huh)
 	{
-		if(IS.stackTagCompound.getString("gdoCode") != null)
+		if(IS.stackTagCompound != null)
 		{
-			data.add("GDO Code: " + IS.stackTagCompound.getString("gdoCode"));
+			if(IS.stackTagCompound.getString("gdoCode") != null)
+			{
+				data.add("GDO Code: " + IS.stackTagCompound.getString("gdoCode"));
+			}
 		}
 	}
 	

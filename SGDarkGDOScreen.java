@@ -49,7 +49,6 @@ public class SGDarkGDOScreen extends SGScreen
 		this.gdo = item;
 		this.owner = player;
 		this.code = item.stackTagCompound.getString("gdoCode");
-		
 	}
 	
 	@Override
@@ -137,7 +136,7 @@ public class SGDarkGDOScreen extends SGScreen
 		{
 			bindTexture("/sgextensions/resources/gdo_gui.png", 256, 64);
 			drawTexturedRect(xO +170,yO + 15,38,18,160,46);
-		}
+		}	
 	}
 
 }

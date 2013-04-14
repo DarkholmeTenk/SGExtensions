@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 
-public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
+public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral, IComputerAccess
 {
 	public int x, y, z;
 	public SGBaseTE ownedGate = null;
@@ -44,7 +44,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	@Override
 	public String[] getMethodNames()
 	{
-		return new String[]{"dialGate","controlledDial", "disconnect", "hasGate", "thisAddress", "findAddress","gateInfo","closeIris","openIris","toggleIris","magicDial"};
+		return new String[]{"info","dialGate","controlledDial", "disconnect", "hasGate", "thisAddress", "findAddress","gateInfo","closeIris","openIris","toggleIris","getRadio","sendRadio"};
 	}
 
 	@Override
@@ -54,37 +54,45 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		switch (method)
 		{
 			case 0:
-				return new Object[]{DialGate(arguments[0].toString())};
+				return new Object[]{getInfo()};
 			case 1:
+				return new Object[]{DialGate(arguments[0].toString())};
+			case 2:
 				{
 					String add = arguments[0].toString();
 					int safe = (int) Double.parseDouble(arguments[1].toString());
 					int quick = (int) Double.parseDouble(arguments[2].toString());
 					return new Object[]{controlledDial(add,safe,quick)};
 				}
-			case 2:
-				return new Object[]{disconnectGate()};
 			case 3:
-				return new Object[]{hasGate()};
+				return new Object[]{disconnectGate()};
 			case 4:
-				return new Object[]{getThisAddress()};
+				return new Object[]{hasGate()};
 			case 5:
-				return new Object[]{findAddressedStargate(arguments[0].toString())};
+				return new Object[]{getThisAddress()};
 			case 6:
-				return new Object[]{getGateInfo()};
+				return new Object[]{findAddressedStargate(arguments)};
 			case 7:
-				return new Object[]{closeIris()};
+				return new Object[]{getGateInfo()};
 			case 8:
-				return new Object[]{openIris()};
+				return new Object[]{closeIris()};
 			case 9:
-				return new Object[]{toggleIris()};
+				return new Object[]{openIris()};
 			case 10:
-			{
-				
-			}
+				return new Object[]{toggleIris()};
+			case 11:
+				return new Object[]{getRadio()};
+			case 12:
+				return new Object[]{sendRadio(arguments)};
 			default:
 				return new Object[0];
 		}
+	}
+	
+	public void queueEv(String e,String a,String b)
+	{
+		String[] list = {e,a,b};
+		queueEvent("Stargate",list);
 	}
 	
 	@Override
@@ -133,6 +141,25 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		return null;
 	}
 	
+	public String getRadio()
+	{
+		if(hasGate())
+		{
+			return ownedGate.getRadioSignal();
+		}
+		return "Error - No gate";
+	}
+	
+	public String sendRadio(Object[] args)
+	{
+		if(hasGate())
+		{
+			if(args.length == 1)
+				ownedGate.sendRadioSignal(args[1].toString());
+		}
+		return "Error - No gate";
+	}
+	
 	public String disconnectGate()
 	{
 		if(hasGate())
@@ -178,6 +205,15 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		return "";
 	}
 	
+	public Map getInfo()
+	{
+		Map retMap = new HashMap();
+		retMap.put("info", "Returns this help array");
+		retMap.put("dialGate", "dialGate(address) attempts to dial the address specified and returns info");
+		retMap.put("controlledDial", "controlledDial(address,safe,quick) attempts to dial with/without safe and quick dialling");
+		return retMap;
+	}
+	
 	public Map getGateInfo()
 	{
 		Map retMap = new HashMap();
@@ -197,7 +233,7 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 			retMap.put("fuelBuffer", ownedGate.fuelBuffer);
 			retMap.put("irisType", ownedGate.getIrisType());
 			retMap.put("irisState", ownedGate.irisState());
-			
+			retMap.put("isInitiator", ownedGate.isInitiator && (state != SGState.Idle) && (state != SGState.Disconnecting));
 		}
 		else
 		{
@@ -338,9 +374,12 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 	{
 		if(isLinkedToStargate)
 		{
-			ownedGate.clearLinkToController();
+			if(ownedGate != null)
+			{
+				ownedGate.clearLinkToController();
+				ownedGate.markBlockForUpdate();
+			}
 			ownedGate = null;
-			ownedGate.markBlockForUpdate();
 			isLinkedToStargate = false;
 		}
 	}
@@ -360,19 +399,34 @@ public class SGDarkDiallerTE extends BaseTileEntity implements IPeripheral
 		
 	}
 
-	public String findAddressedStargate(String address)
+	public String findAddressedStargate(Object[] addressObj)
 	{
-		String csyms = address.substring(0, 5);
-		String dsyms = address.substring(5, 5 + 2);
-		int s = intFromSymbols(csyms);
-		int chunkx = minCoord + s / coordRange;
-		int chunkz = minCoord + s % coordRange;
-		int dimension = minDimension + intFromSymbols(dsyms);
-		World world = DimensionManager.getWorld(dimension);
-		if (world != null)
+		if(addressObj.length == 1)
 		{
-			return "The address leads to chunk coords X: " + chunkx + " Z: " + chunkz + " in dimension " + dimension + ".";
-		} else return "The address is in a non-existent dimension " + dimension + ".";
+			String address = addressObj[1].toString();
+			if(SGAddressing.addressLength == address.length())
+			{
+				address = address.toUpperCase();
+				String csyms = address.substring(0, 5);
+				String dsyms = address.substring(5, 5 + 2);
+				int s = intFromSymbols(csyms);
+				int chunkx = minCoord + s / coordRange;
+				int chunkz = minCoord + s % coordRange;
+				int dimension = minDimension + intFromSymbols(dsyms);
+				World world = DimensionManager.getWorld(dimension);
+				if (world != null)
+				{
+					return "The address leads to chunk coords X: " + chunkx + " Z: " + chunkz + " in dimension " + dimension + ".";
+				} 
+				else 
+					return "The address is in a non-existent dimension " + dimension + ".";
+			}
+			else
+				return "Invalid address";
+		}
+		else
+			return "Missing address";
+				
 	}
 
 	int intFromSymbols(String s)

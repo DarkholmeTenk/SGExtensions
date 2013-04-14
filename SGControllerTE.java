@@ -102,7 +102,8 @@ public class SGControllerTE extends BaseTileEntity
 		//System.out.printf("SGControllerTE: Unlinking controller at (%d, %d, %d) from stargate\n",
 		//		xCoord, yCoord, zCoord);
 		SGBaseTE gte = getLinkedStargateTE();
-		gte.unlinkFromController();
+		if(gte != null)
+			gte.unlinkFromController();
 		isLinkedToStargate = false;
 		markBlockForUpdate();
 	}

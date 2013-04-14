@@ -115,7 +115,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	static int timeToList = 20;
 	static boolean hasNBTListed = false;
 	
-	private String radioMessage;
+	protected String radioMessage;
 
 	//ArrayList<PendingTeleportation> pendingTeleportations = new ArrayList<PendingTeleportation>();
 	//public String homeAddress = "";
@@ -177,7 +177,10 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 				}
 			}
 		}
-		IrisStateFromNum(0);
+		if(irisVarState != SGIrisState.Open)
+		{
+			IrisStateFromNum(0);
+		}
 		return null;
 	}
 	
@@ -200,6 +203,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		if(num == 1)irisVarState=SGIrisState.Closing;
 		if(num == 2)irisVarState=SGIrisState.Closed;
 		if(num == 3)irisVarState=SGIrisState.Opening;
+		this.sendComputerEvent("iris", irisState(), "");
 		markBlockForUpdate();
 	}
 	
@@ -365,6 +369,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		timeout = nbt.getInteger("timeout");
 		fuelBuffer = nbt.getInteger("fuelBuffer");
 		isAdminGate= nbt.getBoolean("isAdminGate");
+		radioMessage = nbt.getString("radioMessage");
 		if(!hasNBTListed)
 		{
 			timeToList = 10;
@@ -397,6 +402,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		nbt.setInteger("timeout", timeout);
 		nbt.setInteger("fuelBuffer", fuelBuffer);
 		nbt.setBoolean("isAdminGate",isAdminGate);
+		if(radioMessage == null){radioMessage="";	}
+		nbt.setString("radioMessage", radioMessage);
 		if (!worldObj.isRemote)
 		{
 			//System.out.printf("SGBaseTE.writeToNBT: (%d; %d, %d, %d) state = %s\n",
@@ -609,6 +616,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			diallingFailure(player, "No stargate at address " + address);
 			return "Error - No stargate at address " + address;
 		}
+		this.radioMessage = null;
 		//System.out.printf("SGBaseTE.connect: addressed TE state = %s\n", dte.state);
 		if (dte.state != SGState.Idle)
 		{
@@ -705,6 +713,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public String disconnect()
 	{
+		this.radioMessage = null;
 		safeEnts.clear();
 		safeTime.clear();
 		//System.out.printf("SGBaseTE: %s: disconnect()\n", side());
@@ -760,6 +769,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			numEngagedChevrons = SGAddressing.addressLength;
 			finishDiallingAddress();
 		}
+		this.sendComputerEvent("dial", address, String.valueOf(initiator));
 	}
 
 	void serverUpdate()
@@ -1578,7 +1588,17 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public void sendComputerEvent(String event,String data, String data2)
 	{
-		
+		if(isLinkedToController)
+		{
+			TileEntity te = worldObj.getBlockTileEntity(linkedX, linkedY, linkedZ);
+			if(te != null)
+			{
+				if(te instanceof SGDarkDiallerTE)
+				{
+					((SGDarkDiallerTE) te).queueEv(event, data, data2);
+				}
+			}
+		}
 	}
 	
 ////////////////////////////////////////////////
@@ -1597,6 +1617,15 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 			}
 		}
 		return false;
+	}
+	
+	public String getRadioSignal()
+	{
+		if(state == SGState.Connected)
+		{
+			return radioMessage;
+		}
+		return null;
 	}
 	
 	public void recieveRadioSignal(String signal)

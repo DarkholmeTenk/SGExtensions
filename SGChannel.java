@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 enum PacketType
 {
-	SetHomeAddress, ConnectOrDisconnect, gdoChange;
+	SetHomeAddress, ConnectOrDisconnect, gdoChange, gdoMess;
 }
 
 public class SGChannel extends BaseNBTChannel<PacketType>
@@ -49,7 +49,12 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 		}
 	}
 	
-	public void gdoData(EntityPlayer player,NBTTagCompound nbt)
+	public static void requestGdoMessage(EntityPlayer player)
+	{
+		
+	}
+	
+	public static void gdoData(EntityPlayer player,NBTTagCompound nbt)
 	{
 		if(nbt.getBoolean("gdoSend"))
 		{

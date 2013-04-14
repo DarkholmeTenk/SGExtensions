@@ -111,11 +111,6 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
     //int getRotation(World world, int x, int y, int z) {
 	//    return world.getBlockMetadata(x, y, z) & rotationMask;
     //}
-	
-	void fixPortalBlocks(World world, int x, int y, int z)
-	{
-		
-	}
 
 	void checkForMerge(World world, int x, int y, int z)
 	{
@@ -191,20 +186,20 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 	public void breakBlock(World world, int x, int y, int z, int id, int data)
 	{
 		SGBaseTE te = getTileEntity(world, x, y, z);
-		super.breakBlock(world, x, y, z, id, data);
 		unmerge(world, x, y, z);
+		super.breakBlock(world, x, y, z, id, data);
 	}
 
 	public void unmerge(World world, int x, int y, int z)
 	{
 		SGBaseTE te = getTileEntity(world, x, y, z);
-		boolean goBang = SGExtensions.explosionsEnabled && !te.isAdminGate;
+		Boolean goBang = false;
 		if (te != null /*&& te.isMerged*/)
 		{
 			if (te.isMerged && te.state == SGState.Connected)
 			{
 				te.state = SGState.Idle;
-				goBang = true;
+				goBang = true && SGExtensions.explosionsEnabled;
 			}
 			te.disconnect();
 			te.unlinkFromController();
