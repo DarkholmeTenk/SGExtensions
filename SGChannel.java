@@ -34,7 +34,7 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 	@Override
 	public void onReceiveFromClient(PacketType type, NBTTagCompound nbt, EntityPlayer player)
 	{
-		System.out.println("datarecieve");
+		//System.out.println("datarecieve");
 		switch (type)
 		{
 			case SetHomeAddress:
