@@ -182,6 +182,20 @@ public class SGExtensions
 				Character.valueOf('D'),Item.diamond,Character.valueOf('N'),darkHardUnstable,Character.valueOf('G'),Block.glass});
 		GameRegistry.addRecipe(TempRec);
 		
+		TempRec = new ShapedOreRecipe(sgDarkGDOItem,true,new Object[]{
+				"IGI","IBI","III",
+				Character.valueOf('I'),Item.ingotIron,Character.valueOf('G'),Block.thinGlass,Character.valueOf('B'),Block.stoneButton
+		});
+		GameRegistry.addRecipe(TempRec);
+		
+		if(!addOres)
+		{
+			TempRec = new ShapedOreRecipe(naquadah,true,new Object[]{
+			"-C-","GCG","-C-",
+			Character.valueOf('C'),Item.coal,Character.valueOf('G'),"dyeGreen"});
+			GameRegistry.addRecipe(TempRec);
+		}
+		
 		if(Loader.isModLoaded("IC2"))
 		{
 			Ic2Recipes.addMaceratorRecipe(new ItemStack(naquadah,1,0), new ItemStack(sgHardFuel,2,2));
