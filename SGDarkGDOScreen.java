@@ -211,8 +211,15 @@ public class SGDarkGDOScreen extends SGScreen
 			bindTexture("/sgextensions/resources/gdo_gui.png", 256, 64);
 			drawTexturedRect(xO +170,yO + 15,38,18,160,46);
 		}	
-		if(message.length() >= 10)
-			message = message.substring(0, 9);
+		if(message != null)
+		{
+			if(message.length() >= 10)
+				message = message.substring(0, 9);
+		}
+		else
+		{
+			message = "";
+		}
 		fontRenderer.drawString(message, xO + 95, yO + 20, color, false);
 	}
 
