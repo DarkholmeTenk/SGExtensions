@@ -47,8 +47,7 @@ public class SGDarkGDO extends BaseItem
 	@Override
 	public ItemStack onItemRightClick(ItemStack is,World w,EntityPlayer player)
 	{
-		Vec3 pos = player.getPosition(0);
-		player.openGui(SGExtensions.instance, SGExtensions.GUIELEMENT_GDO, w,(int)pos.xCoord,(int)pos.yCoord, (int)pos.zCoord);
+		player.openGui(SGExtensions.instance, SGExtensions.GUIELEMENT_GDO, w,(int)player.posX,(int)player.posY, (int)player.posZ);
 		return is;
 	}
 	
