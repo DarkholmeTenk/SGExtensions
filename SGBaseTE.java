@@ -66,8 +66,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	private int timeSinceLastTeleport = -1;
 
 	final static double openingTransientIntensity = 1.3; //2.0;
-	final static double openingTransientRandomness = 0.25;
-	final static double closingTransientRandomness = 0.25;
+	final static double openingTransientRandomness = 0.15;
+	final static double closingTransientRandomness = 0.15;
 	final static double transientDamageRate = 50;
 	final static int fuelPerItem = SGExtensions.fuelAmount;
 	final static int maxFuelBuffer = SGExtensions.fuelStore * fuelPerItem;
@@ -182,6 +182,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		if(irisVarState != SGIrisState.Open)
 		{
 			IrisStateFromNum(0);
+			irisChangeNotify();
 		}
 		return null;
 	}
