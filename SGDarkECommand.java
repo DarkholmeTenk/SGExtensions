@@ -21,7 +21,8 @@ public class SGDarkECommand extends CommandBase
 			if(size == 0)
 			{
 				sen.sendChatToPlayer("Stargate Commands:");
-				sen.sendChatToPlayer("/stargate close <address> - closes gate at address");
+				sen.sendChatToPlayer("/stargate close <address> - Closes gate at address");
+				sen.sendChatToPlayer("/stargate fclose <address> - Force closes gate at address");
 				sen.sendChatToPlayer("/stargate to <address> - Takes you to the gate at address");
 				sen.sendChatToPlayer("/stargate sfb <address> <amount> - Sets the fuel buffer at address to amount");
 				sen.sendChatToPlayer("/stargate list - Lists all stargates");
@@ -31,7 +32,9 @@ public class SGDarkECommand extends CommandBase
 				String sC = par[0].toLowerCase();
 				System.out.printf("CMDTEST: %s\n",sC);
 				if(sC.equals("close") && size > 1)
-					closeGate(par[1],sen);
+					closeGate(par[1],sen,false);
+				if(sC.equals("fclose") && size > 1)
+					closeGate(par[1],sen,true);
 				if(sC.equals("to") &&size > 1)
 					toGate(par[1],sen);
 				if(sC.equals("list"))
@@ -40,7 +43,7 @@ public class SGDarkECommand extends CommandBase
 		}
 	}
 	
-	private void closeGate(String address,ICommandSender sen)
+	private void closeGate(String address,ICommandSender sen,boolean forced)
 	{
 		SGBaseTE gate = SGAddressing.findAddressedStargate(address.toUpperCase());
 		if(gate == null)
@@ -49,7 +52,7 @@ public class SGDarkECommand extends CommandBase
 		}
 		else
 		{
-			String E = gate.ControlledDisconnect();
+			String E = gate.ControlledDisconnect(forced);
 			if(E == "Error - Not initiator")
 				E = E + " - Gate connected to: " + gate.dialledAddress;
 			sen.sendChatToPlayer(E);

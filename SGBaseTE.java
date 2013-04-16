@@ -591,9 +591,14 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	
 	public String ControlledDisconnect()
 	{
+		return ControlledDisconnect(false);
+	}
+	
+	public String ControlledDisconnect(boolean force)
+	{
 		if(state != SGState.Idle)
 		{
-			boolean canDisconnect = isInitiator  || !SGExtensions.recieveHardMode; //isInitiator;
+			boolean canDisconnect = isInitiator  || !SGExtensions.recieveHardMode || force; //isInitiator;
 			SGBaseTE dte = getConnectedStargateTE();
 			boolean validConnection =
 					(dte != null) && (dte.getConnectedStargateTE() == this);
@@ -611,7 +616,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	String ControlledConnect(String address, EntityPlayer player, boolean safe, boolean quick)
 	{
 		String homeAddress = findHomeAddress();
-		if(address.toUpperCase() != homeAddress)
+		if(address.toUpperCase() != homeAddress.toUpperCase())
 		{
 			SGBaseTE dte = SGAddressing.findAddressedStargate(address);
 			//System.out.printf("SGBaseTE.connect: addressed TE = %s\n", dte);
@@ -762,20 +767,23 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		//System.out.printf("SGBaseTE.startDiallingStargate %s, initiator = %s\n",
 				//dte, initiator);
 		dialledAddress = address;
-		connectedLocation = new SGLocation(dte);
-		isInitiator = initiator;
-		//markBlockForUpdate();
-		onInventoryChanged();
-		if(quickDial == false)
+		if(address != this.findHomeAddress())
 		{
-			startDiallingNextSymbol();
+			connectedLocation = new SGLocation(dte);
+			isInitiator = initiator;
+			//markBlockForUpdate();
+			onInventoryChanged();
+			if(quickDial == false)
+			{
+				startDiallingNextSymbol();
+			}
+			else
+			{
+				numEngagedChevrons = SGAddressing.addressLength;
+				finishDiallingAddress();
+			}
+			this.sendComputerEvent("dial", address, String.valueOf(initiator));
 		}
-		else
-		{
-			numEngagedChevrons = SGAddressing.addressLength;
-			finishDiallingAddress();
-		}
-		this.sendComputerEvent("dial", address, String.valueOf(initiator));
 	}
 
 	void serverUpdate()

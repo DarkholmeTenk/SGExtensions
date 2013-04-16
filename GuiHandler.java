@@ -21,7 +21,7 @@ public class GuiHandler implements IGuiHandler {
 			{
 				if(player.getCurrentEquippedItem().getItem() instanceof SGDarkGDO)
 				{
-					System.out.printf("TEST:SRG\n");
+					//System.out.printf("TEST:SRG\n");
 					return new SGDarkGDOContainer(player);
 				}
 			}
@@ -56,7 +56,7 @@ public class GuiHandler implements IGuiHandler {
 			{
 				if(player.getCurrentEquippedItem().getItem() instanceof SGDarkGDO)
 				{
-					System.out.printf("TEST:CRG\n");
+					//System.out.printf("TEST:CRG\n");
 					return new SGDarkGDOScreen(player, player.getCurrentEquippedItem());
 				}
 			}
