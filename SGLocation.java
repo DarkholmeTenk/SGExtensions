@@ -51,11 +51,13 @@ public class SGLocation
 	SGBaseTE getStargateTE()
 	{
 		World world = DimensionManager.getWorld(dimension);
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		if (te instanceof SGBaseTE)
-			return (SGBaseTE) te;
-		else
-			return null;
+		if(world != null)
+		{
+			TileEntity te = world.getBlockTileEntity(x, y, z);
+			if (te instanceof SGBaseTE)
+				return (SGBaseTE) te;
+		}
+		return null;
 	}
 
 }
