@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
 
 public class SGLocation
 {
@@ -55,7 +56,29 @@ public class SGLocation
 		{
 			TileEntity te = world.getBlockTileEntity(x, y, z);
 			if (te instanceof SGBaseTE)
+			{
+				Ticket ticket = ((SGBaseTE) te).getChunkTicket();
+				((SGBaseTE) te).reinstateChunkTicket(ticket);
 				return (SGBaseTE) te;
+			}
+		}
+		else
+		{
+			if(DimensionManager.getWorld(0) != null)
+			{
+				DimensionManager.initDimension(dimension);
+				world = DimensionManager.getWorld(dimension);
+				if(world != null)
+				{
+					TileEntity te = world.getBlockTileEntity(x, y, z);
+					if (te instanceof SGBaseTE)
+					{
+						Ticket ticket = ((SGBaseTE) te).getChunkTicket();
+						((SGBaseTE) te).reinstateChunkTicket(ticket);
+						return (SGBaseTE) te;
+					}
+				}
+			}
 		}
 		return null;
 	}
