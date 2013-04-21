@@ -74,6 +74,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	final static int fuelToOpen = fuelPerItem;
 	private int modifiedFuelToOpen;
 	final static int irisTimerVal = 1;
+	
+	public boolean useFuel = true;
 
 	static Random random = new Random();
 	static DamageSource transientDamage = new TransientDamageSource();
@@ -701,9 +703,16 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	{
 		return ControlledConnect(address,player,true,true);
 	}
-
+	
+	String connect(String address, EntityPlayer player,Boolean noFuel)
+	{
+		useFuel = !noFuel;
+		return ControlledConnect(address,player,true,true);
+	}
+	
 	void diallingFailure(EntityPlayer player, String mess)
 	{
+		useFuel = !this.isAdminGate;
 		if(player != null)
 			player.addChatMessage(mess);
 		playSoundEffect("sgextensions.sg_abort", 2.0F, 1.0F);
@@ -725,6 +734,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	public String disconnect()
 	{
+		useFuel = !this.isAdminGate;
 		this.radioMessage = null;
 		safeEnts.clear();
 		safeTime.clear();
@@ -793,8 +803,11 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		{
 			SGExtensions.AddressStore.addAddress(findHomeAddress());
 			//performPendingTeleportations();
-			fuelUsage();
-			useFuel();
+			if(useFuel)
+			{
+				fuelUsage();
+				useFuel();
+			}
 			if(isAdminGate)
 			{
 				fuelBuffer = maxFuelBuffer;
@@ -928,45 +941,56 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	boolean useFuel(int amount)
 	{
-		//System.out.printf("SGBaseTE.useFuel: %d\n", amount);
-		if (reloadFuel(amount))
+		if(useFuel)
 		{
-			setFuelBuffer(fuelBuffer - amount);
-			return true;
-		} else
-			return false;
+			//System.out.printf("SGBaseTE.useFuel: %d\n", amount);
+			if (reloadFuel(amount))
+			{
+				setFuelBuffer(fuelBuffer - amount);
+				return true;
+			} else
+				return false;
+		}
+		return true;
 	}
 
 	boolean reloadFuel(int amount)
 	{
-		while (fuelBuffer < amount && fuelBuffer + fuelPerItem <= maxFuelBuffer)
+		if(useFuel)
 		{
-			if (useFuelItem())
-				setFuelBuffer(fuelBuffer + fuelPerItem);
-			else
-				break;
+			while (fuelBuffer < amount && fuelBuffer + fuelPerItem <= maxFuelBuffer)
+			{
+				if (useFuelItem())
+					setFuelBuffer(fuelBuffer + fuelPerItem);
+				else
+					break;
+			}
+			return fuelBuffer >= amount;
 		}
-		return fuelBuffer >= amount;
+		return true;
 	}
 	
 	public boolean useFuel()
 	{
-		//System.out.printf("SGBaseTE: Use fuel attempt\n");
-		int n = fuelSlots;
-		if((fuelBuffer + fuelPerItem) <= maxFuelBuffer)
+		if(useFuel)
 		{
-			for (int i = n - 1; i >= 0; i--)
+			//System.out.printf("SGBaseTE: Use fuel attempt\n");
+			int n = fuelSlots;
+			if((fuelBuffer + fuelPerItem) <= maxFuelBuffer)
 			{
-				//System.out.printf("SGBaseTE: Checking slot %d\n", i);
-				ItemStack stack = getStackInSlot(i);
-				if (stack != null && stack.getItem() == SGExtensions.stargateFuel.getItem() && stack.getItemDamage() == SGExtensions.stargateFuel.getItemDamage() && stack.stackSize > 0)
+				for (int i = n - 1; i >= 0; i--)
 				{
-					//System.out.printf("SGBaseTE: Valid item in %d\n", i);
-					fuelBuffer += fuelPerItem;
-					decrStackSize(i, 1);
-					onInventoryChanged();
-					markBlockForUpdate();
-					return true;
+					//System.out.printf("SGBaseTE: Checking slot %d\n", i);
+					ItemStack stack = getStackInSlot(i);
+					if (stack != null && stack.getItem() == SGExtensions.stargateFuel.getItem() && stack.getItemDamage() == SGExtensions.stargateFuel.getItemDamage() && stack.stackSize > 0)
+					{
+						//System.out.printf("SGBaseTE: Valid item in %d\n", i);
+						fuelBuffer += fuelPerItem;
+						decrStackSize(i, 1);
+						onInventoryChanged();
+						markBlockForUpdate();
+						return true;
+					}
 				}
 			}
 		}
@@ -975,13 +999,16 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	
 	public void useAllFuel()
 	{
-		int n = fuelSlots;
-		boolean isDone;
-		do
+		if(useFuel)
 		{
-			isDone = useFuel();
+			int n = fuelSlots;
+			boolean isDone;
+			do
+			{
+				isDone = useFuel();
+			}
+			while(isDone == true);
 		}
-		while(isDone == true);
 	}
 
 	boolean useFuelItem()
