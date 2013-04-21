@@ -1208,6 +1208,18 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		}
 		return false;
 	}
+	
+	public void sendIntegrationMessage(Entity e, boolean succ)
+	{
+		String n = e.getEntityName();
+		if(succ)
+			sendComputerEvent("reintegration","success",n);
+		else
+			sendComputerEvent("reintegration","fail",n);
+		SGBaseTE dte = this.getConnectedStargateTE();
+		if(succ && dte != null && this.isInitiator)
+			dte.sendComputerEvent("reintegration","success",n);
+	}
 
 	public void entityInPortal(Entity entity)
 	{
@@ -1239,6 +1251,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 							teleportEntity(entity, t, dt, connectedLocation.dimension);
 							//addEntToSafety(entity);
 							timeSinceLastTeleport = 30*20;
+							sendIntegrationMessage(entity,true);
 						}
 						else if(entity instanceof EntityPlayerMP)
 						{
@@ -1248,10 +1261,12 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 									((EntityPlayerMP)entity).inventory.clearInventory(-1, -1);
 							}
 							((EntityPlayerMP)entity).attackEntityFrom(irisDamage, 1000);
+							sendIntegrationMessage(entity,false);
 						}
 						else
 						{
 							entity.setDead();
+							sendIntegrationMessage(entity,false);
 						}
 					}
 				}
@@ -1280,6 +1295,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						entity.setDead();
 					}
 				}
+				sendIntegrationMessage(entity,false);
 			}
 		}
 	}
