@@ -121,7 +121,10 @@ public class SGDarkGDOScreen extends SGScreen
 		super(new SGDarkGDOContainer(player),guiWidth,guiHeight);
 		this.gdo = item;
 		this.owner = player;
-		this.code = item.stackTagCompound.getString("gdoCode");
+		this.code = "0000";
+		if(item != null)
+			if(item.stackTagCompound != null)
+				this.code = item.stackTagCompound.getString("gdoCode");
 	}
 	
 	@Override

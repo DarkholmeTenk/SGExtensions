@@ -16,15 +16,23 @@ public class SGDarkGDOContainer extends Container
 	SGDarkGDOContainer(EntityPlayer player)
 	{
 		ItemStack GDOIS = player.getCurrentEquippedItem();
-		
-		if(GDOIS.stackTagCompound == null)
+		if(GDOIS != null)
 		{
-			GDOIS.stackTagCompound = new NBTTagCompound();
-			GDOIS.stackTagCompound.setString("gdoCode", "0000");
-		}
-		else
-		{
-			gdoCode = GDOIS.stackTagCompound.getString("gdoCode");
+			if(GDOIS.stackTagCompound == null)
+			{
+				GDOIS.stackTagCompound = new NBTTagCompound();
+				GDOIS.stackTagCompound.setString("gdoCode", "0000");
+				gdoCode = "0000";
+			}
+			else
+			{
+				gdoCode = GDOIS.stackTagCompound.getString("gdoCode");
+				if(gdoCode == null)
+				{
+					GDOIS.stackTagCompound.setString("gdoCode", "0000");
+					gdoCode = "0000";
+				}
+			}
 		}
 		this.player = player;
 	}
