@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 enum PacketType
 {
-	SetHomeAddress, ConnectOrDisconnect, gdoChange, gdoMess;
+	SetHomeAddress, ConnectOrDisconnect, gdoChange;
 }
 
 public class SGChannel extends BaseNBTChannel<PacketType>
@@ -85,9 +85,10 @@ public class SGChannel extends BaseNBTChannel<PacketType>
 		else
 		{
 			String code = nbt.getString("gdoCode");
-			if(player.getCurrentEquippedItem() != null)
-				if(player.getCurrentEquippedItem().getItem() instanceof SGDarkGDO)
-					player.getCurrentEquippedItem().stackTagCompound.setString("gdoCode", code);
+			if(code != null)
+				if(player.getCurrentEquippedItem() != null)
+					if(player.getCurrentEquippedItem().getItem() instanceof SGDarkGDO)
+						player.getCurrentEquippedItem().stackTagCompound.setString("gdoCode", code);
 		}
 	}
 
