@@ -20,6 +20,8 @@ public class SGDarkPowerTE extends TileEntity implements IPowerReceptor, IEnergy
 	private float TimeToRepeat;
 	public int storedEnergy;
 	public int ic2Buffer;
+	
+	private final int powerLatency = 4;
 
 	public SGDarkPowerTE()
 	{
@@ -27,7 +29,7 @@ public class SGDarkPowerTE extends TileEntity implements IPowerReceptor, IEnergy
 		if(powerFrame != null)
 		{
 			powerVProvider = powerFrame.createPowerProvider();
-			powerVProvider.configure(25, 2, BCFuel, BCFuel, BCFuel * 1000);
+			powerVProvider.configure(powerLatency, 2, BCFuel*powerLatency, BCFuel, BCFuel * 1000);
 			InitGateIntegration();
 		}
 	}
