@@ -6,25 +6,24 @@
 
 package sgextensions;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
 public class BaseItem extends Item
 {
+	String textureName;
 
-	String textureFile;
-
-	public BaseItem(int id, String texture)
+	public BaseItem(int id)
 	{
 		super(id);
-		textureFile = texture;
 		setCreativeTab(SGExtensions.sgCreative);
 	}
-
+	
 	@Override
-	public String getTextureFile()
+	public void registerIcons(IconRegister iR)
 	{
-		return textureFile;
+		this.itemIcon = iR.registerIcon(SGExtensions.baseLocation + this.getUnlocalizedName());
 	}
 
 }

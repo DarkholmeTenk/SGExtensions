@@ -8,11 +8,14 @@ package sgextensions;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -21,9 +24,9 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 
 	static boolean debugMerge = false;
 
-	static final int topAndBottomTexture = 0x00;
-	static final int frontTexture = 0x01;
-	static final int sideTexture = 0x02;
+	Icon topAndBottomTexture;
+	Icon frontTexture;
+	Icon sideTexture;
 	static final int mergedBit = 0x8;
 
 	static int southSide[] = {3, 5, 2, 4};
@@ -70,11 +73,11 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player)
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player,ItemStack st)
 	{
 		int data = Math.round((180 - player.rotationYaw) / 90) & 3;
 		//System.out.printf("SGBaseBlock.onBlockPlacedBy: yaw = %.1f data = %d\n", player.rotationYaw, data);
-		world.setBlockMetadataWithNotify(x, y, z, data);
+		world.setBlockMetadataWithNotify(x, y, z, data, 3);
 		if (!world.isRemote)
 			checkForMerge(world, x, y, z);
 	}
@@ -102,8 +105,17 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 		}
 		return false;
 	}
+	
+	@Override
+	public void registerIcons(IconRegister iR)
+	{
+		topAndBottomTexture = iR.registerIcon(SGExtensions.baseLocation + "ringTB");
+		frontTexture = iR.registerIcon(SGExtensions.baseLocation + "baseFront");
+		sideTexture = iR.registerIcon(SGExtensions.baseLocation + "ringTB");
+	}
 
-	public int getBlockTextureFromSideAndMetadata(int side, int data)
+	@Override
+	public Icon getBlockTextureFromLocalSideAndMetadata(int side, int data)
 	{
 		if (side <= 1)
 			return topAndBottomTexture;
@@ -114,7 +126,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 			return sideTexture;
 	}
 
-    //int getRotation(World world, int x, int y, int z) {
+    //int getRotation(World world, int x, int y, int z) {s
 	//    return world.getBlockMetadata(x, y, z) & rotationMask;
     //}
 
@@ -162,7 +174,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 						if (block instanceof SGRingBlock)
 							((SGRingBlock) block).mergeWith(world, xr, yr, zr, x, y, z);
 						else
-							world.setBlockWithNotify(xr, yr, zr, ConfigHandler.blockSGPortalID);
+							world.setBlock(xr, yr, zr, ConfigHandler.blockSGPortalID, 0,3);
 					}
 			te.checkForLink();
 		}
@@ -177,7 +189,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 			if (!((SGRingBlock)SGExtensions.sgRingBlock).isMerged(world, xr, yr, zr))
 			{
 				int data = world.getBlockMetadata(xr, yr, zr);
-				switch (data & SGRingBlock.subBlockMask)
+				switch (data & 1)
 				{
 					case 0:
 						return 1;
@@ -230,25 +242,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 
 	void explode(World world, double x, double y, double z, double s)
 	{
-		DamageSource oldDamage = DamageSource.explosion;
-		DamageSource.explosion = explodingStargateDamage;
-		try
-		{
-			world.newExplosion(null, x, y, z, (float) s, true, true);
-		}
-		finally
-		{
-			DamageSource.explosion = oldDamage;
-		}
-//		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x - s, y - s, z - s, x + s, y + s, z + s);
-//		List<EntityLiving> ents = world.getEntitiesWithinAABB(EntityLiving.class, box);
-//		for (EntityLiving ent : ents) {
-//			double dx = ent.posX - x, dy = ent.posY - y, dz = ent.posZ - z;
-//			double rsq = Math.max(1.0, dx * dx + dy * dy + dz * dz);
-//			int damage = (int)(1000 / rsq);
-//			System.out.printf("SGBaseBlock.explode: damaging %s by %s\n", ent, damage);
-//			ent.attackEntityFrom(DamageSource.explosion, damage);
-//		}
+		world.newExplosion(null, x, y, z, (float)s, true, true);
 	}
 
 	void unmergeRing(World world, int x, int y, int z)
@@ -271,7 +265,7 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 			//System.out.printf("SGBaseBlock: unmerging ring block\n");
 			((SGRingBlock) block).unmergeFrom(world, xr, yr, zr, x, y, z);
 		} else if (block instanceof SGPortalBlock)
-			world.setBlockWithNotify(xr, yr, zr, 0);
+			world.setBlock(xr, yr, zr, 0,0,3);
 	}
 
 }

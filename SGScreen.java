@@ -114,9 +114,8 @@ public class SGScreen extends GuiContainer
 		bindTexture(path, 1, 1);
 	}
 
-	void bindTexture(String path, int usize, int vsize)
-	{
-		ForgeHooksClient.bindTexture(path, 0);
+	void bindTexture(String path, int usize, int vsize) {
+		mc.renderEngine.bindTexture(path);
 		uscale = 1.0 / usize;
 		vscale = 1.0 / vsize;
 	}

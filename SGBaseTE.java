@@ -110,7 +110,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	private HashMap safeTime = new HashMap();
 	final static int safeTicks = 20*10;
 	
-	IInventory inventory = new InventoryBasic("Stargate", 7);
+	IInventory inventory = new InventoryBasic("Stargate", true, 7);
 	final static int upgradeSlots = 3;
 	final static int fuelSlots = 4;
 	final static int fuelSlot = 0;
@@ -247,7 +247,7 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		int y = this.yCoord+1;
 		int z = this.zCoord;
 		World world = worldObj;
-		world.setBlockMetadataWithNotify(x, y, z, 1 - world.getBlockMetadata(x,y,z));
+		world.setBlockMetadataWithNotify(x, y, z, 1 - world.getBlockMetadata(x,y,z),3);
 	}
 	
 	public String openIris()
@@ -1691,6 +1691,18 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		radioMessage = signal;
 		sendComputerEvent("radio",signal,null);
 		markBlockForUpdate();
+	}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

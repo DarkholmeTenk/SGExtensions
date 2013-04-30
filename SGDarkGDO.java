@@ -25,10 +25,9 @@ public class SGDarkGDO extends BaseItem
 
 	public SGDarkGDO(int id)
 	{
-		super(id, "/sgextensions/resources/textures.png");
+		super(id);
 		this.setCreativeTab(SGExtensions.sgCreative);
-		this.setItemName("sgDarkGDO");
-		this.setIconIndex(0x54);
+		this.setUnlocalizedName("sgDarkGDO");
 		this.setMaxStackSize(1);
 	}
 	
@@ -49,19 +48,6 @@ public class SGDarkGDO extends BaseItem
 	{
 		player.openGui(SGExtensions.instance, SGExtensions.GUIELEMENT_GDO, w,(int)player.posX,(int)player.posY, (int)player.posZ);
 		return is;
-	}
-	
-	/*@Override
-	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
-    {
-		player.openGui(SGExtensions.instance, SGExtensions.GUIELEMENT_GDO, world, x, y, z);
-		return true;
-    }*/
-	
-	@Override
-	public String getTextureFile()
-	{
-		return "/sgextensions/resources/textures.png";
 	}
 
 }

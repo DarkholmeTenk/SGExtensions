@@ -17,7 +17,7 @@ public class BaseSidedInventory extends InventoryBasic implements ISidedInventor
 
 	public BaseSidedInventory(String name, int size, int[][] mapping)
 	{
-		super(name, size);
+		super(name, false, size);
 		sideMapping = mapping;
 	}
 

@@ -10,12 +10,14 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -24,10 +26,12 @@ import java.util.List;
 public class SGRingBlock extends BaseBlock<SGRingTE>
 {
 
-	static final int textureBase = 0x02;
-	static final int topAndBottomTexture = 0x00;
-	static final int numSubBlocks = 2;
-	static final int subBlockMask = 0x1;
+	static Icon ringText;
+	static Icon chevText;
+	static Icon[] sideTextures;
+	static Icon topAndBottomTexture;
+	static int numSubBlocks = 2;
+	static int subBlockMask = 0x1;
 
 	public static Material ringMaterial = new Material(MapColor.stoneColor);
 
@@ -88,12 +92,22 @@ public class SGRingBlock extends BaseBlock<SGRingTE>
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int side, int data)
+	public Icon getBlockTextureFromLocalSideAndMetadata(int side, int data)
 	{
 		if (side <= 1)
 			return topAndBottomTexture;
-		else
-			return textureBase + (data & subBlockMask);
+		return sideTextures[data & subBlockMask];
+	}
+	
+	@Override
+	public void registerIcons(IconRegister iR)
+	{
+		topAndBottomTexture = iR.registerIcon(SGExtensions.baseLocation + "ringTB");
+		ringText = iR.registerIcon(SGExtensions.baseLocation + "ringS");
+		chevText = iR.registerIcon(SGExtensions.baseLocation + "chevS");
+		sideTextures  = new Icon[2];
+		sideTextures[0] = ringText;
+		sideTextures[1] = chevText;
 	}
 
 	@Override
@@ -145,7 +159,7 @@ public class SGRingBlock extends BaseBlock<SGRingTE>
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player)
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player,ItemStack IS)
 	{
 		SGRingTE te = getTileEntity(world, x, y, z);
 		updateBaseBlocks(world, x, y, z, te);

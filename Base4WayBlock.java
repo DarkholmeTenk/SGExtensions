@@ -8,7 +8,9 @@ package sgextensions;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
 public class Base4WayBlock<TE extends TileEntity> extends BaseBlock<TE>
@@ -16,6 +18,8 @@ public class Base4WayBlock<TE extends TileEntity> extends BaseBlock<TE>
 
 	static int rotationShift = 0;
 	static int rotationMask = 0x3;
+	
+	static Icon icon;
 
 	public Base4WayBlock(int id, Material material)
 	{
@@ -51,23 +55,18 @@ public class Base4WayBlock<TE extends TileEntity> extends BaseBlock<TE>
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player)
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player, ItemStack stack)
 	{
 		int rotation = Math.round((180 - player.rotationYaw) / 90) & 3;
 		setRotation(world, x, y, z, rotation, true);
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int side, int data)
+	public Icon getBlockTextureFromLocalSideAndMetadata(int side, int data)
 	{
 		int rotation = extractRotation(data);
 		int localSide = Directions.globalToLocalSide(side, rotation);
-		return getBlockTextureFromLocalSideAndMetadata(localSide, data);
-	}
-
-	int getBlockTextureFromLocalSideAndMetadata(int side, int data)
-	{
-		return blockIndexInTexture + side;
+		return icon;
 	}
 
 }

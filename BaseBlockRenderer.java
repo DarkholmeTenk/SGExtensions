@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeDirection;
@@ -22,7 +23,8 @@ public class BaseBlockRenderer<BLOCK extends BaseBlock<TE>, TE extends TileEntit
 	public int renderID;
 
 	Tessellator tess;
-	double x0, y0, z0, u0, v0, us, vs;
+	double x0, y0, z0; //, u0, v0, us, vs;
+	Icon tile;
 	boolean textureOverridden;
 	IBlockAccess world;
 	BLOCK block;
@@ -45,13 +47,13 @@ public class BaseBlockRenderer<BLOCK extends BaseBlock<TE>, TE extends TileEntit
 	public void renderInventoryBlock(Block blk, int data, int modelID, RenderBlocks rb)
 	{
 		world = null;
-		block = (BLOCK) blk;
+		block = (BLOCK)blk;
 		metadata = data;
 		te = null;
-		setUpTextureOverride(-1);
+		setUpTextureOverride(null);
 		int facing = block.facingInInventory(metadata);
 		int rotation = block.rotationInInventory(metadata);
-		ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
+		//ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
 		tess = Tessellator.instance;
 		tess.setBrightness(0xf000f0);
 		tess.startDrawingQuads();
@@ -65,7 +67,7 @@ public class BaseBlockRenderer<BLOCK extends BaseBlock<TE>, TE extends TileEntit
 	{
 		//System.out.printf("BaseBlockRenderer.renderWorldBlock: (%d,%d,%d) %s\n", x, y, z, blk);
 		this.world = world;
-		block = (BLOCK) blk;
+		block = (BLOCK)blk;
 		metadata = world.getBlockMetadata(x, y, z);
 		te = block.getTileEntity(world, x, y, z);
 		setUpTextureOverride(rb.overrideBlockTexture);
@@ -91,36 +93,19 @@ public class BaseBlockRenderer<BLOCK extends BaseBlock<TE>, TE extends TileEntit
 		return true;
 	}
 
-	void setUpTextureOverride(int index)
-	{
-		if (index >= 0)
-		{
+	void setUpTextureOverride(Icon override) {
+		if (override != null) {
 			textureOverridden = true;
-			u0 = (index & 0xf) / 16.0;
-			v0 = (index >> 4) / 16.0;
-		} else
+			tile = override;
+		}
+		else
 			textureOverridden = false;
 	}
 
-	void selectTile(int index)
-	{
-		selectTile(index >> 4, index & 0xf);
-	}
-
-	void selectTile(int row, int col)
-	{
-		selectTile(row, col, 16, 16);
-	}
-
-	void selectTile(int row, int col, int width, int height)
-	{
-		if (!textureOverridden)
-		{
-			u0 = col * (1 / 16.0);
-			v0 = row * (1 / 16.0);
-		}
-		us = 16.0 / width;
-		vs = 16.0 / height;
+	void selectTile(Icon icon) {
+		//System.out.printf("BaseBlockRenderer.selectTile: %s (%.4f, %.4f) - (%.4f, %.4f)\n", icon,
+		//	icon.getMinU(), icon.getMinV(), icon.getMaxU(), icon.getMaxV());
+		tile = icon;
 	}
 
 	static double cubeFaces[][] = {
@@ -145,7 +130,10 @@ public class BaseBlockRenderer<BLOCK extends BaseBlock<TE>, TE extends TileEntit
 
 	void selectTileForSide(int side)
 	{
-		selectTile(block.getBlockTextureFromSideAndMetadata(side, metadata));
+		selectTile(block.getBlockTextureFromLocalSideAndMetadata(side, metadata));
+		if (tile == null)
+			System.out.printf("BaseBlockRenderer.selectTile: %s: No texture for side %s data %s\n",
+				block, side, metadata);
 	}
 
 	static float[] shadeTable = {
@@ -176,25 +164,26 @@ public class BaseBlockRenderer<BLOCK extends BaseBlock<TE>, TE extends TileEntit
 	}
 
 	void face(Trans3 t,
-	          double x, double y, double z,
-	          double dx1, double dy1, double dz1,
-	          double dx2, double dy2, double dz2,
-	          double u, double v, double du, double dv)
+		double x, double y, double z,
+		double dx1, double dy1, double dz1,
+		double dx2, double dy2, double dz2,
+		double u, double v, double du, double dv)
 	{
 		vertex(t, x, y, z, u, v);
 		vertex(t, x + dx1, y + dy1, z + dz1, u, v + dv);
 		vertex(t, x + dx1 + dx2, y + dy1 + dy2, z + dz1 + dz2, u + du, v + dv);
 		vertex(t, x + dx2, y + dy2, z + dz2, u + du, v);
 	}
-
-	void vertex(Trans3 t, double x, double y, double z, double u, double v)
-	{
-		Vector3 p = t.p(x, y, z);
-//		if (textureOverridden) {
-//			u *= us;
-//			v *= vs;
-//		}
-		tess.addVertexWithUV(p.x, p.y, p.z, u0 + u * (1 / 256.0), v0 + v * (1 / 256.0));
-	}
+	
+	void vertex(Trans3 t, double x, double y, double z, double u, double v) {
+		if (tile != null) {
+			Vector3 p = t.p(x, y, z);
+			float U = tile.getInterpolatedU(u);
+			float V = tile.getInterpolatedV(v);
+			//System.out.printf("BaseBlockRenderer.vertex: (%.3f, %.3f, %.3f), (%.4f, %.4f)\n",
+			//	p.x, p.y, p.z, U, V);
+			tess.addVertexWithUV(p.x, p.y, p.z, U, V);
+		}
+	}	
 
 }

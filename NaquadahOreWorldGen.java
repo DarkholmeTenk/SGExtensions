@@ -71,7 +71,7 @@ public class NaquadahOreWorldGen implements IWorldGenerator
 	void setBlock(int x, int y, int z, int id)
 	{
 		//world.setBlock(x0 + x, y, z0 + z, id);
-		chunk.setBlockID(x, y, z, id);
+		chunk.setBlockIDWithMetadata(x, y, z, id, 2);
 	}
 
 	void generateNode(int id, int x, int y, int z, int sx, int sy, int sz)
@@ -88,8 +88,7 @@ public class NaquadahOreWorldGen implements IWorldGenerator
 				for (int j = y; j <= y + dy; j++)
 					for (int k = z; k <= z + dz; k++)
 						if (i < 16 && j < h && k < 16)
-							if (getBlock(i, j, k) == stone)
-							{
+							if (getBlock(i, j, k) == stone) {
 								//System.out.printf("generateNode: putting at (%d, %d, %d)\n", i, j, k);
 								setBlock(i, j, k, id);
 							}
@@ -105,28 +104,21 @@ public class NaquadahOreWorldGen implements IWorldGenerator
 	{
 		if(SGExtensions.addOres)
 		{
-			for (int y = 0; y < 64; y++)
-				for (int x = 0; x < 16; x++)
-					for (int z = 0; z < 16; z++)
-					{
-						if (getBlock(x, y, z) == stone && getBlock(x, y + 1, z) == lava)
-						{
-							if (odds(32))
-							{
-								//System.out.printf("NaquadahOreWorldGen: generating under lava at (%d, %d, %d)\n", x0 + x, y, z0 + z);
-								generateNode(naquadah, x, y, z, 2, 1, 2);
-							}
-						}
-					}
-			int n = random.nextInt(6);
-			for (int i = 0; i < n; i++)
-			{
+			int n = random.nextInt(9);
+			for (int i = 0; i < n; i++) {
+				int x = random.nextInt(16);
+				int z = random.nextInt(16);
+				for (int y = 0; y < 64; y++)
+					if (getBlock(x, y, z) == stone && getBlock(x, y+1, z) == lava) {
+						generateNode(naquadah, x, y, z, 3, 1, 3);
+				}
+			}
+			n = random.nextInt(6);
+			for (int i = 0; i < n; i++) {
 				int x = random.nextInt(16);
 				int y = random.nextInt(64);
 				int z = random.nextInt(16);
-				if (getBlock(x, y, z) == stone)
-				{
-					//System.out.printf("NaquadahOreWorldGen: generating randomly at (%d, %d, %d)\n", x0 + x, y, z0 + z);
+				if (getBlock(x, y, z) == stone) {
 					generateNode(naquadah, x, y, z, 2, 2, 2);
 				}
 			}

@@ -17,7 +17,7 @@ public class SGRingBlockRenderer extends BaseBlockRenderer
 	                                int modelId, RenderBlocks rb)
 	{
 		SGRingBlock ringBlock = (SGRingBlock) block;
-		if (rb.overrideBlockTexture >= 0 || !ringBlock.isMerged(world, x, y, z))
+		if (rb.overrideBlockTexture != null || !ringBlock.isMerged(world, x, y, z))
 			return super.renderWorldBlock(world, x, y, z, block, modelId, rb);
 		else
 			return false;

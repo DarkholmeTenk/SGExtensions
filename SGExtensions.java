@@ -1,6 +1,6 @@
 package sgextensions;
 
-import ic2.api.Ic2Recipes;
+import ic2.api.recipe.*;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -15,8 +15,12 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -26,6 +30,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -84,6 +89,9 @@ public class SGExtensions
 	public static final int GUIELEMENT_GDO = 3;
 	public static SGDarkAddressStore AddressStore;
 	
+	public static final String baseLocation = "sgextensions:";
+	
+	
 	public static SGDarkGDO sgDarkGDOItem;
 
 	@Mod.PreInit()
@@ -128,13 +136,9 @@ public class SGExtensions
 		event.registerServerCommand(new SGDarkECommand());
 	}
 	
-	SGDarkMultiItem registerMI(int ID,String[] sN, int[] icons,String[] info,int StackSize)
+	SGDarkMultiItem registerMI(int ID,String[] sN, String[] icons,String[] info,int StackSize)
 	{
-		SGDarkMultiItem Temp = new SGDarkMultiItem(ID);
-		Temp.setSubNames(sN);
-		Temp.setSubIcons(icons);
-		Temp.setSubInfo(info);
-		Temp.setMaxStackSize(StackSize);
+		SGDarkMultiItem Temp = new SGDarkMultiItem(ID,sN,icons,info,StackSize);
 		return Temp;
 	}
 	
@@ -198,12 +202,12 @@ public class SGExtensions
 		
 		if(Loader.isModLoaded("IC2"))
 		{
-			Ic2Recipes.addMaceratorRecipe(new ItemStack(naquadah,1,0), new ItemStack(sgHardFuel,2,2));
+			ic2.api.recipe.Recipes.macerator.addRecipe(new ItemStack(naquadah,1,0), new ItemStack(sgHardFuel,2,2));
 			TempRec = new ShapedOreRecipe(darkHardStableDust,true,new Object[]{
 					"DGD","DND","DGD",
 					Character.valueOf('D'),"dustDiamond",Character.valueOf('N'),darkHardDust,Character.valueOf('G'),Block.sand});
 			GameRegistry.addRecipe(TempRec);
-			Ic2Recipes.addCompressorRecipe(darkHardStableDust,darkHardStable);
+			ic2.api.recipe.Recipes.compressor.addRecipe(darkHardStableDust,darkHardStable);
 		}
 		
 		if(Loader.isModLoaded("ComputerCraft"))
@@ -229,28 +233,28 @@ public class SGExtensions
 			"Allows dialling with no kawoosh#at 4 * energy cost",
 			"Allows computer controlled iris",
 			"No energy usage, unbreakable, etc"};
-		int[] c = new int[]{71,72,70,73};
+		String[] c = new String[]{"upFD","upSD","upIR","upAD"};
 		SGDarkMultiItem TempUpgrades = registerMI(ConfigHandler.itemUpgradesID,a,c,b,1);
 		GameRegistry.registerItem((Item) TempUpgrades, "sgDarkUpgrades");
 		sgDarkUpgrades = TempUpgrades;
 		
 		a = new String[] {"Unstable Naquadriah","Naquadriah","Naquadah Dust","Naquadriah Dust"};
 		b = new String[] {};
-		c = new int[]{80,81,82,83};
+		c = new String[]{"naqUn","naqSt","naqDu","naqSDu"};
 		SGDarkMultiItem TempHardFuel = registerMI(ConfigHandler.itemHardID,a,c,b,64);
 		GameRegistry.registerItem((Item) TempHardFuel, "sgDarkHardFuel");
 		sgHardFuel = TempHardFuel;
 	}
 	void registerBlocks()
 	{
-		diallerBlock = new SGDarkDiallerBlock(ConfigHandler.blockDiallerID).setBlockName("diallerblock");
-		sgDarkPowerBlock = new SGDarkPowerBlock(ConfigHandler.blockPowererID, 0).setBlockName("powererblock");
-		sgBaseBlock = new SGBaseBlock(ConfigHandler.blockSGBaseID).setBlockName("stargateBase");
-		sgRingBlock = new SGRingBlock(ConfigHandler.blockSGRingID).setBlockName("stargateRing");
-		sgControllerBlock = new SGControllerBlock(ConfigHandler.blockSGControllerID).setBlockName("stargateController");
-		sgPortalBlock = new SGPortalBlock(ConfigHandler.blockSGPortalID).setBlockName("stargatePortal");
-		naquadahBlock = new NaquadahBlock(ConfigHandler.blockNaquadahID).setBlockName("naquadahBlock");
-		naquadahOre = new NaquadahOreBlock(ConfigHandler.blockOreNaquadahID).setBlockName("naquadahOre");
+		diallerBlock = new SGDarkDiallerBlock(ConfigHandler.blockDiallerID).setUnlocalizedName("diallerblock");
+		sgDarkPowerBlock = new SGDarkPowerBlock(ConfigHandler.blockPowererID, 0).setUnlocalizedName("powererblock");
+		sgBaseBlock = new SGBaseBlock(ConfigHandler.blockSGBaseID).setUnlocalizedName("stargateBase");
+		sgRingBlock = new SGRingBlock(ConfigHandler.blockSGRingID).setUnlocalizedName("stargateRing");
+		sgControllerBlock = new SGControllerBlock(ConfigHandler.blockSGControllerID).setUnlocalizedName("stargateController");
+		sgPortalBlock = new SGPortalBlock(ConfigHandler.blockSGPortalID).setUnlocalizedName("stargatePortal");
+		naquadahBlock = new NaquadahBlock(ConfigHandler.blockNaquadahID).setUnlocalizedName("naquadahBlock");
+		naquadahOre = new NaquadahOreBlock(ConfigHandler.blockOreNaquadahID).setUnlocalizedName("naquadahOre");
 
 		ItemStack chiselledSandstone = new ItemStack(Block.sandStone, 1, 1);
 		ItemStack smoothSandstone = new ItemStack(Block.sandStone, 1, 2);
@@ -295,10 +299,10 @@ public class SGExtensions
         String blueDye = new String("dyeBlue");
         String orangeDye = new String("dyeOrange");
 
-        naquadah = new BaseItem(ConfigHandler.itemNaquadahID, "/sgextensions/resources/textures.png").setItemName("naquadah").setIconIndex(0x41);
-        naquadahIngot = new BaseItem(ConfigHandler.itemNaqIngotID, "/sgextensions/resources/textures.png").setItemName("naquadahIngot").setIconIndex(0x42);
-        sgCoreCrystal = new BaseItem(ConfigHandler.itemCrystalCoreID,"/sgextensions/resources/textures.png").setItemName("sgCrystalCore").setIconIndex(0x44);
-        sgControllerCrystal = new BaseItem(ConfigHandler.itemCrystalControlID,"/sgextensions/resources/textures.png").setItemName("sgCrystalControl").setIconIndex(0x45);
+        naquadah = new BaseItem(ConfigHandler.itemNaquadahID).setUnlocalizedName("naquadah");
+        naquadahIngot = new BaseItem(ConfigHandler.itemNaqIngotID).setUnlocalizedName("naquadahIngot");
+        sgCoreCrystal = new BaseItem(ConfigHandler.itemCrystalCoreID).setUnlocalizedName("sgCrystalCore");
+        sgControllerCrystal = new BaseItem(ConfigHandler.itemCrystalControlID).setUnlocalizedName("sgCrystalControl");
         sgDarkGDOItem = new SGDarkGDO(ConfigHandler.itemGDOID);
 		
         GameRegistry.registerItem(sgDarkGDOItem, "toolGDO");

@@ -8,9 +8,11 @@ package sgextensions;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
@@ -25,6 +27,18 @@ public class SGPortalBlock extends Block
 		super(id, Material.rock);
 		this.setBlockUnbreakable();
 		setBlockBounds(0, 0, 0, 0, 0, 0);
+	}
+	
+	@Override
+	public void registerIcons(IconRegister iR)
+	{
+		
+	}
+	
+	@Override
+	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+	{
+		return null;
 	}
 
 	@Override
@@ -49,7 +63,7 @@ public class SGPortalBlock extends Block
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World A, int X, int Y, int Z)
 	{
 		if(isIris(A,X,Y,Z))
-			return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)X, (double)Y, (double)Z, (double)X + 1, (double)Y + 1, (double)Z + 1);
+			return AxisAlignedBB.getAABBPool().getAABB((double)X, (double)Y, (double)Z, (double)X + 1, (double)Y + 1, (double)Z + 1);
 		return null;
 	}
 	
@@ -66,7 +80,7 @@ public class SGPortalBlock extends Block
 	}
 	
 	@Override
-	public int tickRate()
+	public int tickRate(World w)
 	{
 		return 3;
 	}
@@ -125,7 +139,7 @@ public class SGPortalBlock extends Block
 				{
 					if(meta != 1)
 					{
-						world.setBlockMetadataWithNotify(x, y, z, 1);
+						world.setBlockMetadataWithNotify(x, y, z, 1,3);
 						world.markBlockForUpdate(x,y,z);
 					}
 				}
@@ -133,7 +147,7 @@ public class SGPortalBlock extends Block
 				{
 					if(meta == 1)
 					{
-						world.setBlockMetadataWithNotify(x, y, z, 0);
+						world.setBlockMetadataWithNotify(x, y, z, 0,3);
 						world.markBlockForUpdate(x,y,z);
 					}
 				}
@@ -142,7 +156,7 @@ public class SGPortalBlock extends Block
 			{
 				if(meta == 1)
 				{
-					world.setBlockMetadataWithNotify(x, y, z, 0);
+					world.setBlockMetadataWithNotify(x, y, z, 0,3);
 					world.markBlockForUpdate(x,y,z);
 				}
 			}

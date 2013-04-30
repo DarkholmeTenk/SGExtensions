@@ -14,6 +14,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -30,7 +31,6 @@ public class BaseBlock<TE extends TileEntity> extends BlockContainer implements 
 	public BaseBlock(int id, Material material, Class<TE> teClass)
 	{
 		super(id, material);
-		setTextureFile("/sgextensions/resources/textures.png");
 		tileEntityClass = teClass;
 		if (teClass != null)
 			GameRegistry.registerTileEntity(teClass, teClass.getName());
@@ -135,9 +135,9 @@ public class BaseBlock<TE extends TileEntity> extends BlockContainer implements 
 	public void setMetadata(World world, int x, int y, int z, int data, boolean notify)
 	{
 		if (notify)
-			world.setBlockMetadataWithNotify(x, y, z, data);
+			world.setBlockMetadataWithNotify(x, y, z, data,3);
 		else
-			world.setBlockMetadata(x, y, z, data);
+			world.setBlockMetadataWithNotify(x, y, z, data,2);
 	}
 
 	public int getFacing(IBlockAccess world, int x, int y, int z)
@@ -177,6 +177,18 @@ public class BaseBlock<TE extends TileEntity> extends BlockContainer implements 
 		int facing = facingInWorld(data, te);
 		int rotation = rotationInWorld(data, te);
 		return new Trans3(x + 0.5, y + 0.5, z + 0.5).side(facing).turn(rotation);
+	}
+	
+	@Override
+	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+	{
+		int side = par5;
+		int meta = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+		return getBlockTextureFromLocalSideAndMetadata(side,meta);
+	}
+	
+	public Icon getBlockTextureFromLocalSideAndMetadata(int side, int data) {
+		return blockIcon;
 	}
 
 }

@@ -7,20 +7,32 @@
 package sgextensions;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
 public class SGControllerBlock extends Base4WayBlock<SGControllerTE>
 {
+	
+	Icon[] side = new Icon[3];
 
 	public SGControllerBlock(int id)
 	{
 		super(id, Material.rock /*SGRingBlock.ringMaterial*/, SGControllerTE.class);
 		setHardness(1.5F);
-		blockIndexInTexture = 0x0a;
 		setCreativeTab(SGExtensions.sgCreative);
+	}
+	
+	@Override
+	public void registerIcons(IconRegister IR)
+	{
+		side[0] = IR.registerIcon(SGExtensions.baseLocation + "controllerSide");
+		side[1] = IR.registerIcon(SGExtensions.baseLocation + "controllerTop");
+		side[2] = IR.registerIcon(SGExtensions.baseLocation + "controllerBottom");
 	}
 
 //	@Override
@@ -35,9 +47,9 @@ public class SGControllerBlock extends Base4WayBlock<SGControllerTE>
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player)
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player,ItemStack is)
 	{
-		super.onBlockPlacedBy(world, x, y, z, player);
+		super.onBlockPlacedBy(world, x, y, z, player, is);
 		getTileEntity(world, x, y, z).checkForLink();
 	}
 	
@@ -63,6 +75,15 @@ public class SGControllerBlock extends Base4WayBlock<SGControllerTE>
 			SGBaseTE gte = cte.getLinkedStargateTE();
 			if (gte != null)
 				gte.clearLinkToController();
+		}
+	}
+	
+	@Override
+	public Icon getBlockTextureFromLocalSideAndMetadata(int Iside, int data) {
+		switch (Iside) {
+			case 0: return side[2];
+			case 1: return side[1];
+			default: return side[0];
 		}
 	}
 

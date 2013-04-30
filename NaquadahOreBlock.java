@@ -7,6 +7,7 @@
 package sgextensions;
 
 import net.minecraft.block.BlockOre;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -15,12 +16,10 @@ import java.util.Random;
 public class NaquadahOreBlock extends BlockOre
 {
 
-	static int texture = 0x40;
 
 	public NaquadahOreBlock(int id)
 	{
-		super(id, texture);
-		setTextureFile("/sgextensions/resources/textures.png");
+		super(id);
 		setHardness(5.0F);
 		setResistance(10.0F);
 		setStepSound(soundStoneFootstep);
@@ -32,6 +31,11 @@ public class NaquadahOreBlock extends BlockOre
 	public int idDropped(int par1, Random par2Random, int par3)
 	{
 		return ConfigHandler.itemNaquadahID;
+	}
+	
+	public void registerIcons(IconRegister icon)
+	{
+		this.blockIcon = icon.registerIcon(SGExtensions.baseLocation + "naquadahOre");
 	}
 
 	@Override

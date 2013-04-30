@@ -81,7 +81,7 @@ class SGBaseTERenderer extends TileEntitySpecialRenderer
 	void renderStargate(SGBaseTE te, float t)
 	{
 		GL11.glRotatef(90 * te.getRotation(), 0, 1, 0);
-		bindTextureByName("/sgextensions/resources/textures.png");
+		bindTextureByName("/mods/sgextensions/textures/stargate.png");
 		GL11.glNormal3f(0, 1, 0);
 		renderRing(ringMidRadius, ringOuterRadius, RingType.Outer);
 		renderInnerRing(te, t);

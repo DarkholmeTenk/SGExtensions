@@ -7,6 +7,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.ForgeDirection;
 
 public class SGDarkPowerTE extends TileEntity implements IPowerReceptor, IEnergySink
 {
@@ -144,7 +145,7 @@ public class SGDarkPowerTE extends TileEntity implements IPowerReceptor, IEnergy
 	}
 
 	@Override
-	public int powerRequest()
+	public int powerRequest(ForgeDirection d)
 	{
 		if (!isFull || isGateActive)
 		{

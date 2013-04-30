@@ -8,9 +8,12 @@ package sgextensions;
 
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SGRingItem extends ItemBlock
 {
+	
+	public final static int subBlockMask = 0x01;
 
 	public SGRingItem(int id)
 	{
@@ -19,9 +22,10 @@ public class SGRingItem extends ItemBlock
 	}
 
 	@Override
-	public int getIconFromDamage(int i)
+	public Icon getIconFromDamage(int i)
 	{
-		return SGExtensions.sgRingBlock.getBlockTextureFromSideAndMetadata(0, i);
+		SGRingBlock t = (SGRingBlock) SGExtensions.sgRingBlock;
+		return t.getBlockTextureFromLocalSideAndMetadata(0, i);
 	}
 
 	@Override
@@ -31,7 +35,7 @@ public class SGRingItem extends ItemBlock
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack stack)
+	public String getUnlocalizedName(ItemStack stack)
 	{
 		String result = subItemName(stack.getItemDamage());
 		//System.out.printf("SGRingItem.getItemNameIS: %s --> %s\n", stack, result);

@@ -2,23 +2,26 @@ package sgextensions;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class SGDarkMultiItem extends Item
 {
 	private String[] subNames;
-	private int[] subIcons;
+	private String[] subIcons;
 	private String[] subInfo;
+	private Icon[] subIconItems;
 	
 	public void setSubNames(String[] names)
 	{
 		subNames = names;
 	}
 	
-	public void setSubIcons(int[] icons)
+	public void setSubIcons(String[] icons)
 	{
 		subIcons = icons;
 	}
@@ -63,17 +66,21 @@ public class SGDarkMultiItem extends Item
 		return retIS;
 	}
 	
-	public SGDarkMultiItem(int par1)
+	public SGDarkMultiItem(int par1,String[] sNames,String[] iconList,String[] info,int Stack)
 	{
 		super(par1);
 		setHasSubtypes(true);
 		setCreativeTab(SGExtensions.sgCreative);
+		this.setSubNames(sNames);
+		this.setSubIcons(iconList);
+		this.setSubInfo(info);
+		this.setMaxStackSize(Stack);
 	}
 	
 	@Override
-	public int getIconFromDamage(int meta)
+	public Icon getIconFromDamage(int meta)
 	{
-		return subIcons[meta];
+		return subIconItems[meta];
 	}
 	
 	@Override
@@ -83,16 +90,27 @@ public class SGDarkMultiItem extends Item
 	}
 	
 	@Override
-	public String getItemNameIS(ItemStack IS)
+	public String getUnlocalizedName(ItemStack IS)
 	{
 		IS.setItemName(subNames[IS.getItemDamage()]);
 		return subNames[IS.getItemDamage()];
 	}
 	
 	@Override
-	public String getTextureFile()
+	public void registerIcons(IconRegister iR)
 	{
-		return "/sgextensions/resources/textures.png";
+		if(subNames != null)
+		{
+			if(subNames.length > 0)
+			{
+				Icon[] D = new Icon[subNames.length];
+				for(int i=0;i<this.subNames.length;i++)
+				{
+					D[i] = iR.registerIcon(SGExtensions.baseLocation + this.subIcons[i]);
+				}
+				subIconItems = D;
+			}
+		}
 	}
 	
 	@Override
