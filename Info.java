@@ -7,6 +7,6 @@ public class Info
 	static final String modName = "SG Craft - Darkcraft Edition";
 	static final String modID = "SGCraft";
 	static final String modPackage = "sg";
-	static final String versionNumber = "0.6";
-	static final String versionBounds = "[0.6,0.6]";
+	static final String versionNumber = "0.7";
+	static final String versionBounds = "[0.7,0.7]";
 }
