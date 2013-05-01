@@ -7,7 +7,4 @@
   <copy file="/root/.jenkins/jobs/SGExtensions/custombuild.xml" todir="/root/.jenkins/workspace/SGExtensions"/>
 </target>
 
-<!-- Default target to run -->
-<target name="main"/>
-
 </project>
