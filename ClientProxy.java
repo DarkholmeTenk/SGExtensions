@@ -42,21 +42,14 @@ public class ClientProxy extends CommonProxy
 
 	void registerSounds()
 	{
-		try
-		{
-			FMLLog.log("SGExtensions", Level.INFO, "Loading SGExtensions sounds...");
-			SoundPool pool = ModLoader.getMinecraftInstance().sndManager.soundPoolSounds;
-			URL resourceURL = getClass().getClassLoader().getResource("sgextensions/resources/");
-			pool.addSound("sgextensions/sg_abort.ogg", new URL(resourceURL, "sounds/sg_abort.ogg"));
-			pool.addSound("sgextensions/sg_close.ogg", new URL(resourceURL, "sounds/sg_close.ogg"));
-			pool.addSound("sgextensions/sg_dial.ogg", new URL(resourceURL, "sounds/sg_dial.ogg"));
-			pool.addSound("sgextensions/sg_open.ogg", new URL(resourceURL, "sounds/sg_open.ogg"));
-			FMLLog.log("SGExtensions", Level.INFO, "... complete!");
-		}
-		catch (MalformedURLException e)
-		{
-			throw new RuntimeException("The hell?",e);
-		}
+		FMLLog.log("SGExtensions", Level.INFO, "Loading SGExtensions sounds...");
+		SoundPool pool = ModLoader.getMinecraftInstance().sndManager.soundPoolSounds;
+		ClassLoader cl = getClass().getClassLoader();
+		pool.addSound("sgextensions/sg_abort.ogg", cl.getResource("sgextensions/resources/sounds/sg_abort.ogg"));
+		pool.addSound("sgextensions/sg_close.ogg", cl.getResource("sgextensions/resources/sounds/sg_close.ogg"));
+		pool.addSound("sgextensions/sg_dial.ogg", cl.getResource("sgextensions/resources/sounds/sg_dial.ogg"));
+		pool.addSound("sgextensions/sg_open.ogg", cl.getResource("sgextensions/resources/sounds/sg_open.ogg"));
+		FMLLog.log("SGExtensions", Level.INFO, "... complete!");
 	}
 
 	void registerRenderers()
