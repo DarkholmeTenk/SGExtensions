@@ -11,14 +11,15 @@ public class SGDarkAddressStore {
 	{
 		int pos = 0;
 		boolean deletion = false;
+		Object[] addCol = storedAddresses.values().toArray();
 		if(storedAddresses.size() > 0)
 		{
-			int size = storedAddresses.size();
+			int size = addCol.length;
 			for(int i = pos;i<size;i++)
 			{
-				if(SGAddressing.findAddressedStargate(storedAddresses.get(i)) == null)
+				if(SGAddressing.findAddressedStargate(addCol[i].toString()) == null)
 				{
-					storedAddresses.remove(i);
+					removeAddress(addCol[i].toString());
 					deletion = true;
 				}
 			}

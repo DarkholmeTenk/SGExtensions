@@ -84,13 +84,13 @@ public class SGExtensions
 	public static NaquadahOreWorldGen naquadahOreGenerator;
 	public static Block diallerBlock;
 	public static Block sgDarkPowerBlock;
+	public static Block sgDarkEngineBlock;
 	public static final int GUIELEMENT_GATE = 1;
 	public static final int GUIELEMENT_DHD = 2;
 	public static final int GUIELEMENT_GDO = 3;
 	public static SGDarkAddressStore AddressStore;
 	
 	public static final String baseLocation = "sgextensions:";
-	
 	
 	public static SGDarkGDO sgDarkGDOItem;
 
@@ -255,7 +255,8 @@ public class SGExtensions
 		sgPortalBlock = new SGPortalBlock(ConfigHandler.blockSGPortalID).setUnlocalizedName("stargatePortal");
 		naquadahBlock = new NaquadahBlock(ConfigHandler.blockNaquadahID).setUnlocalizedName("naquadahBlock");
 		naquadahOre = new NaquadahOreBlock(ConfigHandler.blockOreNaquadahID).setUnlocalizedName("naquadahOre");
-
+		sgDarkEngineBlock = new SGDarkEngineBlock(ConfigHandler.blockEngineID).setUnlocalizedName("engineBlock");
+		
 		ItemStack chiselledSandstone = new ItemStack(Block.sandStone, 1, 1);
 		ItemStack smoothSandstone = new ItemStack(Block.sandStone, 1, 2);
 		ItemStack sgChevronBlock = new ItemStack(sgRingBlock, 1, 1);
@@ -293,6 +294,9 @@ public class SGExtensions
 
 		GameRegistry.registerBlock(naquadahOre, "naquadahOre");
         LanguageRegistry.addName(naquadahOre, "Naquadah Ore");
+        
+        GameRegistry.registerBlock(sgDarkEngineBlock, "naquadahEngine");
+        LanguageRegistry.addName(sgDarkEngineBlock, "Naquadah Engine");
 	}
 	void registerItems()
 	{

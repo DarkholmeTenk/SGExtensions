@@ -720,7 +720,6 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 
 	String findHomeAddress()
 	{
-		String homeAddress;
 		try
 		{
 			return getHomeAddress();
@@ -1001,7 +1000,6 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 	{
 		if(useFuel)
 		{
-			int n = fuelSlots;
 			boolean isDone;
 			do
 			{

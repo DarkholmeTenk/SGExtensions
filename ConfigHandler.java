@@ -21,6 +21,7 @@ public class ConfigHandler
 	public static int blockSGControllerID;
 	public static int blockOreNaquadahID;
 	public static int blockNaquadahID;
+	public static int blockEngineID;
 	public static int itemNaquadahID;
 	public static int itemNaqIngotID;
 	public static int itemCrystalCoreID;
@@ -43,6 +44,9 @@ public class ConfigHandler
 
 		Property powerInterface = config.getBlock("PowerInterfaceID", 3746, "The BlockID for the Gate Power Interface.");
 		blockPowererID = powerInterface.getInt();
+		
+		Property naqEng = config.getBlock("NaqEngineID", 3755, "The BlockID for the Naquadah Engine.");
+		blockEngineID = naqEng.getInt();
 
 		Property oreRegen = config.get("WorldGen","OreRegen",false);
 		regenOres = oreRegen.getBoolean(false);
