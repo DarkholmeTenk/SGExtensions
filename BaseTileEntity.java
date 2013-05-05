@@ -137,12 +137,12 @@ public class BaseTileEntity extends TileEntity
 	public ItemStack decrStackSize(int slot, int amount)
 	{
 		IInventory inventory = getInventory();
-		if (inventory != null)
-		{
+		if (inventory != null) {
 			ItemStack result = inventory.decrStackSize(slot, amount);
 			onInventoryChanged();
 			return result;
-		} else
+		}
+		else
 			return null;
 	}
 

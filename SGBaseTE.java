@@ -969,6 +969,13 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 		return true;
 	}
 	
+	@Override
+	public ItemStack getStackInSlot(int slot)
+	{
+		IInventory inventory = getInventory();
+		return (inventory != null) ? inventory.getStackInSlot(slot) : null;
+	}
+	
 	public boolean useFuel()
 	{
 		if(useFuel)
