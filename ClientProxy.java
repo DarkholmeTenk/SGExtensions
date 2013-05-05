@@ -53,7 +53,7 @@ public class ClientProxy extends CommonProxy
 
 	void registerRenderers()
 	{
-		addBlockRenderer((SGDarkEngineBlock)SGExtensions.sgEngineBlock, new SGDarkEngineRenderer())
+		//addBlockRenderer((SGDarkEngineBlock)SGExtensions.sgEngineBlock, new SGDarkEngineRenderer())
 		addBlockRenderer((SGRingBlock)SGExtensions.sgRingBlock, new SGRingBlockRenderer());
 		addBlockRenderer((SGBaseBlock)SGExtensions.sgBaseBlock, new SGBaseBlockRenderer());
 		addBlockRenderer((SGControllerBlock)SGExtensions.sgControllerBlock, new BaseBlockRenderer());

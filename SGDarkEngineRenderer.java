@@ -13,7 +13,15 @@ import static net.minecraftforge.common.ForgeDirection.*;
 
 public class SGDarkEngineRenderer extends TileEntitySpecialRenderer
 {
-
+	
+	@Override
+	public void renderTileEntityAt(TileEntity tileentity, double d0, double d1,
+			double d2, float f) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/*
 	private ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
@@ -184,5 +192,5 @@ public class SGDarkEngineRenderer extends TileEntitySpecialRenderer
 	
 	GL11.glPopAttrib();
 	GL11.glPopMatrix();
-	}
+	}*/
 }

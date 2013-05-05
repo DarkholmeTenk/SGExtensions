@@ -11,12 +11,14 @@ public class SGDarkEngineBlock extends BaseBlock<SGDarkEngineTE>
 	}
 	
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube()
+	{
 		return false;
 	}
 	
 	@Override
-	public boolean renderAsNormalBlock() {
+	public boolean renderAsNormalBlock()
+	{
 		return false;
 	}
 	
@@ -25,4 +27,5 @@ public class SGDarkEngineBlock extends BaseBlock<SGDarkEngineTE>
 	{
 		return true;
 	}
+	
 }
