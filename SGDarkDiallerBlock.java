@@ -29,7 +29,6 @@ public class SGDarkDiallerBlock extends BaseBlock<SGDarkDiallerTE>
 		return false;
 	}
 	
-	@Override
 	public Icon getIcon(int i,int j)
 	{
 		switch(i)

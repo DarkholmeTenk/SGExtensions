@@ -97,7 +97,7 @@ public class SGDarkMultiItem extends Item
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iR)
+	public void updateIcons(IconRegister iR)
 	{
 		if(subNames != null)
 		{

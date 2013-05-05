@@ -21,9 +21,9 @@ public class BaseItem extends Item
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iR)
+	public void updateIcons(IconRegister iR)
 	{
-		this.itemIcon = iR.registerIcon(SGExtensions.baseLocation + this.getUnlocalizedName());
+		this.iconIndex = iR.registerIcon(SGExtensions.baseLocation + this.getUnlocalizedName());
 	}
 
 }
