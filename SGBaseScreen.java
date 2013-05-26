@@ -35,6 +35,7 @@ public class SGBaseScreen extends SGScreen
 
 	public static SGBaseScreen create(EntityPlayer player, World world, int x, int y, int z)
 	{
+		debugPrint("A000021");
 		SGBaseTE te = SGBaseTE.at(world, x, y, z);
 		if (te != null)
 			return new SGBaseScreen(player, te);
@@ -45,6 +46,7 @@ public class SGBaseScreen extends SGScreen
 	public SGBaseScreen(EntityPlayer player, SGBaseTE te)
 	{
 		super(new SGBaseContainer(player, te), guiWidth, guiHeight);
+		debugPrint("A000020");
 		this.te = te;
 	}
 
@@ -92,7 +94,7 @@ public class SGBaseScreen extends SGScreen
 		drawBackgroundLayer();
 	}
 	
-	public void debugPrint(String mess)
+	public static void debugPrint(String mess)
 	{
 		System.out.println(mess);
 	}
