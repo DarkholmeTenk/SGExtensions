@@ -119,7 +119,7 @@ public class SGBaseContainer extends BaseContainer
 	{
 		debugPrint("A000018");
 		te.checkUpgrades();
-		super.detectAndSendChanges();
+		//super.detectAndSendChanges();
 		for (int i = 0; i < crafters.size(); i++)
 		{
 			ICrafting crafter = (ICrafting) crafters.get(i);
