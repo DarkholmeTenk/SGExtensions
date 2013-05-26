@@ -4,7 +4,7 @@
 
 
 <target name="main">
-  <copy file="/root/.jenkins/jobs/SGExtensions/custombuild.xml" todir="/root/.jenkins/workspace/SGExtensions"/>
+  <copy file="/root/.jenkins/jobs/SGExtensions/testcustombuild.xml" todir="/root/.jenkins/workspace/SGExtensionsTestbuilds"/>
 </target>
 
 </project>
