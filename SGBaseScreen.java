@@ -91,13 +91,20 @@ public class SGBaseScreen extends SGScreen
 	{
 		drawBackgroundLayer();
 	}
+	
+	public void debugPrint(String mess)
+	{
+		System.out.println(mess);
+	}
 
 	@Override
 	void drawBackgroundLayer()
 	{
+		debugPrint("A000003");
 		bindTexture("/sgextensions/resources/sg_gui.png", 256, 256);
 		drawTexturedRect(0, 0, guiWidth, guiHeight, 0, 0);
 		drawFuelGauge();
+		debugPrint("A000004");
 //	}
 //
 //	@Override
@@ -106,9 +113,11 @@ public class SGBaseScreen extends SGScreen
 		int cx = xSize / 2;
 		int color = 0x52aeff;
 		drawCenteredString(fontRenderer, screenTitle, cx, 8, color, false);
+		debugPrint("A000005");
 		drawAddressSymbols(cx, 22, address);
 		drawCenteredString(fontRenderer, address, cx, 72, color, false);
 		drawString(fontRenderer, "Fuel", 150, 96, color, false);
+		debugPrint("A000006");
 	}
 	
 	String ITS(int Value,int rounding)
@@ -127,6 +136,7 @@ public class SGBaseScreen extends SGScreen
 
 	void drawFuelGauge()
 	{
+		debugPrint("A000007");
 		if(drawFuel == 0)
 		{
 			drawFuel = 10;
@@ -137,13 +147,16 @@ public class SGBaseScreen extends SGScreen
 		{
 			drawFuel --;
 		}
+		debugPrint("A000008");
 		int level = fuelGaugeHeight * te.fuelBuffer / te.maxFuelBuffer;
 		GL11.glEnable(GL11.GL_BLEND);
 		drawTexturedRect(fuelGaugeX, fuelGaugeY + fuelGaugeHeight - level,
 				fuelGaugeWidth, level, fuelGaugeU, fuelGaugeV);
+		debugPrint("A000009");
 		GL11.glDisable(GL11.GL_BLEND);
 		int color = 0x52aeff;
 		drawRightString(fontRenderer, fuelLevel + "/" + fuelMax,169,112,color,false);
+		debugPrint("A000010");
 		
 	}
 

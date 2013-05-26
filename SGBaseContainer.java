@@ -29,18 +29,26 @@ public class SGBaseContainer extends BaseContainer
 
 	SGBaseTE te;
 	
+	public static void debugPrint(String mess)
+	{
+		System.out.println(mess);
+	}
+	
 	public SGBaseContainer(EntityPlayer player, SGBaseTE te)
 	{
+		debugPrint("A000012");
 		this.te = te;
 		tx = 0;
 		addFuelSlots();
 		addUpgradeSlots();
 		addPlayerSlots(player, playerSlotsX, playerSlotsY);
+		debugPrint("A000013");
 	}
 
 
 	public static SGBaseContainer create(EntityPlayer player, World world, int x, int y, int z)
 	{
+		debugPrint("A000014");
 		SGBaseTE te = SGBaseTE.at(world, x, y, z);
 		if (te != null)
 			return new SGBaseContainer(player, te);
@@ -50,10 +58,12 @@ public class SGBaseContainer extends BaseContainer
 	
 	void addFuelSlots()
 	{
+		debugPrint("A000015");
 		int n = te.fuelSlots;
 		//System.out.printf("SGBaseContainer: %s fuel slots\n", n);
 		for (int i = 0; i < n; i++)
 		{
+			debugPrint("A000016");
 			int row = i / numFuelSlotColumns;
 			int col = i % numFuelSlotColumns;
 			int x = fuelSlotsX + col * 18;
@@ -64,6 +74,7 @@ public class SGBaseContainer extends BaseContainer
 			addSlotToContainer(TSlot);
 			tx++;
 		}
+		debugPrint("A000017");
 	}
 	
 	void addUpgradeSlots()
@@ -104,6 +115,7 @@ public class SGBaseContainer extends BaseContainer
 	@Override
 	public void detectAndSendChanges()
 	{
+		debugPrint("A000018");
 		te.checkUpgrades();
 		super.detectAndSendChanges();
 		for (int i = 0; i < crafters.size(); i++)
@@ -111,6 +123,7 @@ public class SGBaseContainer extends BaseContainer
 			ICrafting crafter = (ICrafting) crafters.get(i);
 			sendStateTo(crafter);
 		}
+		debugPrint("A000019");
 	}
 
 }
