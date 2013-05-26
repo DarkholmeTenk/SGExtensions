@@ -81,6 +81,11 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 		if (!world.isRemote)
 			checkForMerge(world, x, y, z);
 	}
+	
+	public void debugPrint(String mess)
+	{
+		System.out.println(mess);
+	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player,
@@ -98,13 +103,15 @@ public class SGBaseBlock extends Base4WayBlock<SGBaseTE>
 				te.dumpChunkLoadingState("SGBaseBlock.onBlockActivated");
 			if (te.isMerged)
 			{
-
+				debugPrint("A000001");
                 player.openGui(SGExtensions.instance,SGExtensions.GUIELEMENT_GATE,world,x,y,z);
+                debugPrint("A000002");
 				return true;
 			}
 		}
 		return false;
 	}
+	
 	
 	@Override
 	public void registerIcons(IconRegister iR)
