@@ -117,15 +117,16 @@ public class SGBaseContainer extends BaseContainer
 	@Override
 	public void detectAndSendChanges()
 	{
+		/*
 		debugPrint("A000018");
 		te.checkUpgrades();
-		//super.detectAndSendChanges();
+		super.detectAndSendChanges();
 		for (int i = 0; i < crafters.size(); i++)
 		{
 			ICrafting crafter = (ICrafting) crafters.get(i);
 			sendStateTo(crafter);
 		}
-		debugPrint("A000019");
+		debugPrint("A000019");*/
 	}
 
 }
