@@ -79,6 +79,7 @@ public class SGBaseContainer extends BaseContainer
 	
 	void addUpgradeSlots()
 	{
+		debugPrint("A000023");
 		int n = te.upgradeSlots;
 		ItemStack AU = ((SGDarkMultiItem) (SGExtensions.sgDarkUpgrades)).getUpgrade("Stargate Upgrade - Admin");
 		for (int i = 0; i < n; i++)
@@ -93,6 +94,7 @@ public class SGBaseContainer extends BaseContainer
 			addSlotToContainer(TSlot);
 			tx++;
 		}
+		debugPrint("A000024");
 	}
 
 	@Override

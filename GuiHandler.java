@@ -13,6 +13,12 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
+	
+	public void debugPrint(String t)
+	{
+		System.out.println(t);
+	}
+	
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if(SGExtensions.GUIELEMENT_GDO == id)
@@ -63,9 +69,11 @@ public class GuiHandler implements IGuiHandler {
 		}
 		else
 		{
+			debugPrint("A000025");
 			TileEntity ringTE = world.getBlockTileEntity(x,y,z);
 			if(ringTE instanceof SGBaseTE)
 			{
+				debugPrint("A000026");
 				return new SGBaseScreen(player, (SGBaseTE) ringTE);
 			}
 			else if(ringTE instanceof SGRingTE)
@@ -77,11 +85,13 @@ public class GuiHandler implements IGuiHandler {
 				TileEntity ringBaseTE = world.getBlockTileEntity(baseX, baseY, baseZ);
 				if(ringTE instanceof SGBaseTE)
 				{
+					debugPrint("A000026.5");
 					return new SGBaseScreen(player, (SGBaseTE) ringBaseTE);
 				}
 			}
 			else if(ringTE instanceof SGControllerTE)
 			{
+				debugPrint("A000027");
 				return new SGControllerScreen(player, world, x, y, z);
 			}
 		}
