@@ -993,8 +993,8 @@ public class SGBaseTE extends BaseChunkLoadingTE implements IInventory
 						//System.out.printf("SGBaseTE: Valid item in %d\n", i);
 						fuelBuffer += fuelPerItem;
 						decrStackSize(i, 1);
-						onInventoryChanged();
-						markBlockForUpdate();
+						//onInventoryChanged();
+						//markBlockForUpdate();
 						return true;
 					}
 				}

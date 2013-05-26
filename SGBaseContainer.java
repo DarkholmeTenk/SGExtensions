@@ -100,7 +100,7 @@ public class SGBaseContainer extends BaseContainer
 	@Override
 	void sendStateTo(ICrafting crafter)
 	{
-		crafter.sendProgressBarUpdate(this, 0, te.fuelBuffer);
+		//crafter.sendProgressBarUpdate(this, 0, te.fuelBuffer);
 	}
 
 	@Override
